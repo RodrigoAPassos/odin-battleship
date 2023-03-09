@@ -70,7 +70,11 @@ const Gameboard = () => {
         if (grid[target].hasShip == true) {
             grid[target].wasShot = true;
             grid[target].shipName.hit();
-        }else grid[target].wasShot = true;
+            return "hit"
+        }else {
+            grid[target].wasShot = true
+            return "miss"
+        };
     }
 
     const checkAllSunk = () => {
@@ -80,5 +84,5 @@ const Gameboard = () => {
     return {grid, place, receiveAttack, checkAllSunk}
 }
 
-
-module.exports = Gameboard;
+export default Gameboard;
+//module.exports = Gameboard;

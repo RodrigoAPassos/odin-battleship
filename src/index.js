@@ -1,4 +1,4 @@
-import {gameLoop} from "./game";
+import gameLoop from "./game.js";
 
 const start = () => {
     document.querySelector(".newGameBtn").removeEventListener("click", start);

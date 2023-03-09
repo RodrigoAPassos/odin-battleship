@@ -6,6 +6,7 @@ body {
     height: 100vh;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
 }
 
 header {
@@ -18,7 +19,7 @@ header {
 }
 
 .loadContainer {
-    flex: 1;
+    margin: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -35,6 +36,45 @@ header {
 
 .newGameBtn:active {
     border: 1px solid #475569;
+}
+
+.player1 {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.shipsBoard, .attackBoard {
+    display: flex;
+    flex-wrap: wrap;
+    width: 320px;
+    justify-content: center;
+    align-items: center;
+}
+
+.cell {
+    height: 30px;
+    width: 30px;
+    border: 1px solid grey;
+}
+
+.hasShip {
+    background-color: #475569;
+}
+
+.waterHit {
+    background-color: aquamarine;
+    outline: solid 1px blue;
+    outline-offset: -1px;
+}
+
+.shipHit {
+    background-color: #1e293b;
+    outline: solid 1px red;
+    outline-offset: -1px;
+}
+
+.shipSunk {
+    background-color: red;
 }
 
 footer {
