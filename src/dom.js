@@ -33,10 +33,21 @@ const displayBoards = (p1, p2) => {
                 p1.attackPlayer(cell.getAttribute("data-index"), p2);
                 p2.computerAttack(p1);
                 displayBoards(p1, p2);
+                checkWinner(p1, p2);
             });
         }
         attackBoard1.appendChild(cell);
     }
+}
+
+const checkWinner = (p1, p2) => {
+    if (p1.Gameboard.checkAllSunk() == true && p2.Gameboard.checkAllSunk() == true) {
+        return "It's a Tie!"
+    } else if (p1.Gameboard.checkAllSunk() == true && p2.Gameboard.checkAllSunk() == false) {
+        return "Player 2 Won!"
+    } else if (p1.Gameboard.checkAllSunk() == false && p2.Gameboard.checkAllSunk() == true) {
+        return "Player 1 Won!";
+    } else return;
 }
 
 export default displayBoards;
