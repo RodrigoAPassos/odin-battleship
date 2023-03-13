@@ -10,8 +10,8 @@ const gameLoop = () => {
     player1.Gameboard.place(4, "v", "patrol");
     player1.Gameboard.place(0, "h", "submarine");
     player1.Gameboard.place(31, "v", "destroyer");
-    player1.Gameboard.place(74, "h", "battleship");
-    player1.Gameboard.place(54, "h", "carrier");
+    player1.Gameboard.place(76, "h", "battleship");
+    player1.Gameboard.place(55, "h", "carrier");
 
     //Add ships for player2
     player2.Gameboard.place(4, "v", "patrol");
