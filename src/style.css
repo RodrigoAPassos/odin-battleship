@@ -21,8 +21,13 @@ header {
 .loadContainer {
     margin: 10px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.playVs {
+    text-align: center;
 }
 
 .newGameBtn {
@@ -34,11 +39,27 @@ header {
     cursor: pointer;
 }
 
-.newGameBtn:active {
+.newGameBtn:active, .PvP:active, .PvC:active {
     border: 1px solid #475569;
 }
 
-.player1 {
+.PvC, .PvP {
+    font-size: 0.8rem;
+    padding: 8px 12px;
+    background-color: #64748b;
+    color: white;
+    border-radius: 12px;
+    border: 2px solid #475569;
+    cursor: pointer;
+}
+
+.winner {
+    font-size: 1.4rem;
+    color: black;
+    text-align: center;
+}
+
+.player1, .player2 {
     display: flex;
     justify-content: space-evenly;
 }

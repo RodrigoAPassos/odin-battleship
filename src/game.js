@@ -2,7 +2,7 @@ import player from "./players";
 import displayBoards from "./dom";
 
 
-const gameLoop = () => {
+const gameLoop = (gameType) => {
     const player1 = player();
     const player2 = player();//computer
 

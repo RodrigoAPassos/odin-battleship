@@ -1,7 +1,12 @@
-const displayBoards = (p1, p2) => {
+const displayBoards = (p1, p2/* , gameType */) => {
     //clear for display updated
     const shipBoards1 = document.querySelector(".player1 .shipsBoard");
     const attackBoard1 = document.querySelector(".player1 .attackBoard");
+    const messageContainer = document.querySelector(".winner");
+
+    messageContainer.innerHTML = "Player 1";
+    shipBoards1.style.visibility = "visible";
+    attackBoard1.style.visibility = "visible";
 
     while (shipBoards1.firstChild && attackBoard1.firstChild){
         shipBoards1.removeChild(shipBoards1.firstChild);
@@ -41,12 +46,21 @@ const displayBoards = (p1, p2) => {
 }
 
 const checkWinner = (p1, p2) => {
+    const attackBoard1 = document.querySelector(".player1 .attackBoard");
+    const messageContainer = document.querySelector(".winner");
+    const shipBoards1 = document.querySelector(".player1 .shipsBoard");
     if (p1.Gameboard.checkAllSunk() == true && p2.Gameboard.checkAllSunk() == true) {
-        return "It's a Tie!"
+        shipBoards1.style.visibility = "hidden";
+        attackBoard1.style.visibility = "hidden";
+        messageContainer.innerHTML = "It's a Tie!";
     } else if (p1.Gameboard.checkAllSunk() == true && p2.Gameboard.checkAllSunk() == false) {
-        return "Player 2 Won!"
+        shipBoards1.style.visibility = "hidden";
+        attackBoard1.style.visibility = "hidden";
+        messageContainer.innerHTML = "Player 2 Won!";
     } else if (p1.Gameboard.checkAllSunk() == false && p2.Gameboard.checkAllSunk() == true) {
-        return "Player 1 Won!";
+        shipBoards1.style.visibility = "hidden";
+        attackBoard1.style.visibility = "hidden";
+        messageContainer.innerHTML = "Player 1 Won!";
     } else return;
 }
 
