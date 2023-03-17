@@ -59,6 +59,12 @@ header {
     text-align: center;
 }
 
+.shipList {
+    display: flex;
+    justify-content: space-around;
+    list-style-type: none;
+}
+
 .player1, .player2 {
     display: flex;
     justify-content: space-evenly;
