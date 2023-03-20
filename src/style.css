@@ -53,6 +53,11 @@ header {
     cursor: pointer;
 }
 
+.waiting {
+    display: flex;
+    justify-content: space-evenly;
+}
+
 .winner {
     font-size: 1.4rem;
     color: black;
@@ -61,7 +66,7 @@ header {
 
 .shipList {
     display: flex;
-    justify-content: space-around;
+    gap: 2rem;
     list-style-type: none;
 }
 

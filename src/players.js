@@ -2,7 +2,7 @@ import gameboard from "./gameboard";
 
 const player = () => {
     const Gameboard = gameboard();
-    let legalMove;
+    let legalMove = null;
     let lastHit = null;
     let firstHit = null;
     let tries = 0;
@@ -33,8 +33,12 @@ const player = () => {
                 switch (tries) {
                     case 0:
                         legalTarget = lastHit + 1;
-                        legalTarget < 100 ? 
-                        legalMove = attackPlayer(legalTarget, targetPlayer) : tries++;
+                        if (legalTarget < 100) {
+                            legalMove = attackPlayer(legalTarget, targetPlayer)
+                        } else {
+                            tries++;
+                            computerAttack(targetPlayer);
+                        }
                         if (legalMove == "valid hit attack") {
                             lastHit = legalTarget;
                         } else if (legalMove == "valid miss attack") {
@@ -59,8 +63,12 @@ const player = () => {
                         break;
                     case 2:
                         legalTarget = lastHit + 10;
-                        legalTarget < 100 ? 
-                        legalMove = attackPlayer(legalTarget, targetPlayer) : tries++;
+                        if (legalTarget < 100) {
+                            legalMove = attackPlayer(legalTarget, targetPlayer)
+                        } else {
+                            tries++;
+                            computerAttack(targetPlayer);
+                        }
                         if (legalMove == "valid hit attack") {
                             lastHit = legalTarget;
                         } else if (legalMove == "valid miss attack") {

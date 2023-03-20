@@ -18,8 +18,10 @@ const Gameboard = () => {
                     grid[position + (i * 10)].hasShip = true;
                     grid[position + (i * 10)].shipName = patrol;
                 }
-            }
+            } return shipType;
         }else if (shipType == "submarine") {
+            if (orientation == "h" && /[9]$/.test(position)) return;
+            if (orientation == "v" && position > 89) return;
             const submarine = ship(2);
             for (let i = 0; i < 2; i++) {
                 if (orientation == "h") { 
@@ -29,8 +31,10 @@ const Gameboard = () => {
                     grid[position + (i * 10)].hasShip = true;
                     grid[position + (i * 10)].shipName = submarine;
                 }
-            }
+            } return shipType;
         }else if (shipType == "destroyer") {
+            if (orientation == "h" && /[8-9]$/.test(position)) return;
+            if (orientation == "v" && position > 79) return;
             const destroyer = ship(3);
             for (let i = 0; i < 3; i++) {
                 if (orientation == "h") { 
@@ -40,8 +44,10 @@ const Gameboard = () => {
                     grid[position + (i * 10)].hasShip = true;
                     grid[position + (i * 10)].shipName = destroyer;
                 }
-            }
+            } return shipType;
         }else if (shipType == "battleship") {
+            if (orientation == "h" && /[7-9]$/.test(position)) return;
+            if (orientation == "v" && position > 69) return;
             const battleship = ship(4);
             for (let i = 0; i < 4; i++) {
                 if (orientation == "h") { 
@@ -51,8 +57,10 @@ const Gameboard = () => {
                     grid[position + (i * 10)].hasShip = true;
                     grid[position + (i * 10)].shipName = battleship;
                 }
-            }
+            } return shipType;
         }else if (shipType == "carrier") {
+            if (orientation == "h" && /[6-9]$/.test(position)) return;
+            if (orientation == "v" && position > 59) return;
             const carrier = ship(5);
             for (let i = 0; i < 5; i++) {
                 if (orientation == "h") { 
@@ -62,7 +70,7 @@ const Gameboard = () => {
                     grid[position + (i * 10)].hasShip = true;
                     grid[position + (i * 10)].shipName = carrier;
                 }
-            }
+            } return shipType;
         }
     }
 
