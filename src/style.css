@@ -58,6 +58,14 @@ header {
     justify-content: space-evenly;
 }
 
+[data-orientation="h"] {
+    color: blue;
+}
+
+[data-orientation="v"] {
+    color: green;
+}
+
 .winner {
     font-size: 1.4rem;
     color: black;
