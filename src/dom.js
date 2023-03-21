@@ -131,6 +131,10 @@ const displayBoards = (p1, p2, gameType) => {
         //play vs player
 
         break;
+        case "restart":
+            listOfShips = [];
+            displayBoards(p1, p2, "pvcPlace");
+            break;
     }
 }
 

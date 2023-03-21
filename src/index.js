@@ -1,7 +1,13 @@
 import gameLoop from "./game.js";
 
 const start = (gameType) => {
-    document.querySelector(".newGameBtn").innerHTML = "Restart";
+    const newGameBtn = document.querySelector(".newGameBtn");
+    newGameBtn.innerHTML = "Restart";
+    newGameBtn.removeEventListener("click", gameOpt);
+    newGameBtn.addEventListener("click", function restartGame () {
+        location.reload();
+    })
+    
     const playVs = document.querySelector(".playVs");
     playVs.style.visibility = "hidden";
 
