@@ -1,6 +1,6 @@
-function allowDrop (ev) {
+/* function allowDrop (ev) {
     ev.preventDefault();
-}
+} */
 
 function dragData (ev) {
     ev.dataTransfer.setData("text", ev.target.id);
@@ -48,7 +48,13 @@ const displayBoards = (p1, p2, gameType) => {
                     listOfShips.push(shipPlaced);
                     displayBoards(p1, p2, "pvcPlace");
                 });
-                cell.addEventListener("dragover", allowDrop);
+                cell.addEventListener("dragover", function allowDrop (ev) {
+                    if (p1.Gameboard.grid[ev.target.getAttribute("data-index")].hasShip == true || 
+                        p1.Gameboard.grid[ev.target.getAttribute("data-index")].nearShip == true) {
+                            ev.target.style.border = "1px dashed red";
+                    }
+                    ev.preventDefault();
+                });
             }
             shipBoards1.appendChild(cell);
         }

@@ -4,7 +4,7 @@ const Gameboard = () => {
     const grid = [];
 
     for (let i = 0; i < 100; i++) {
-        grid.push({hasShip: false, shipName: null, wasShot: false});
+        grid.push({hasShip: false, nearShip: false, shipName: null, wasShot: false});
     }
 
     const place = (position, orientation, shipType) => {
@@ -12,11 +12,11 @@ const Gameboard = () => {
             //check for free positions
             for (let i = 0; i < 1; i++) {
                 if (orientation == "h") {
-                    if (grid[position + i].hasShip == false) continue;
-                    else if (grid[position + i].hasShip == true) return;
+                    if (grid[position + i].hasShip == false && grid[position + i].nearShip == false) continue;
+                    else if (grid[position + i].hasShip == true || grid[position + i].nearShip == true) return;
                 } else {
-                    if (grid[position + (i * 10)].hasShip == false) continue;
-                    else if (grid[position + (i * 10)].hasShip == true) return;
+                    if (grid[position + (i * 10)].hasShip == false && grid[position + (i * 10)].nearShip == false) continue;
+                    else if (grid[position + (i * 10)].hasShip == true || grid[position + (i * 10)].nearShip == true) return;
                 }
             }
             const patrol = ship(1);
@@ -25,9 +25,21 @@ const Gameboard = () => {
                 if (orientation == "h") { 
                     grid[position + i].hasShip = true;
                     grid[position + i].shipName = patrol;
+                    if ((position + (i + 10)) < 100) grid[position + (i + 10)].nearShip = true;
+                    if ((position + (i - 10)) > 0) grid[position + (i - 10)].nearShip = true;
+                    if (i == 0) {
+                        if ((position - 1) > 0) grid[position - 1].nearShip = true;
+                        if ((position + i + 1) < 100) grid[position + i + 1].nearShip = true;
+                    }
                 }else {
                     grid[position + (i * 10)].hasShip = true;
                     grid[position + (i * 10)].shipName = patrol;
+                    grid[position + (i * 10) + 1].nearShip = true;
+                    grid[position + (i * 10) - 1].nearShip = true;
+                    if (i == 0) {
+                        grid[position - 10].nearShip = true;
+                        grid[position + (i * 10) + 10].nearShip = true;
+                    }
                 }
             } return shipType;
         }else if (shipType == "submarine") {
@@ -36,21 +48,38 @@ const Gameboard = () => {
             //check for free positions
             for (let i = 0; i < 2; i++) {
                 if (orientation == "h") {
-                    if (grid[position + i].hasShip == false) continue;
-                    else if (grid[position + i].hasShip == true) return;
+                    if (grid[position + i].hasShip == false && grid[position + i].nearShip == false) continue;
+                    else if (grid[position + i].hasShip == true || grid[position + i].nearShip == true) return;
                 } else {
-                    if (grid[position + (i * 10)].hasShip == false) continue;
-                    else if (grid[position + (i * 10)].hasShip == true) return;
+                    if (grid[position + (i * 10)].hasShip == false && grid[position + (i * 10)].nearShip == false) continue;
+                    else if (grid[position + (i * 10)].hasShip == true || grid[position + (i * 10)].nearShip == true) return;
                 }
             }
+            //place
             const submarine = ship(2);
             for (let i = 0; i < 2; i++) {
                 if (orientation == "h") { 
                     grid[position + i].hasShip = true;
                     grid[position + i].shipName = submarine;
+                    grid[position + (i + 10)].nearShip = true;
+                    grid[position + (i - 10)].nearShip = true;
+                    if (i == 0) {
+                        grid[position - 1].nearShip = true;
+                    }
+                    if (i == 1) {
+                        grid[position + i + 1].nearShip = true;
+                    }
                 }else {
                     grid[position + (i * 10)].hasShip = true;
                     grid[position + (i * 10)].shipName = submarine;
+                    grid[position + (i * 10) + 1].nearShip = true;
+                    grid[position + (i * 10) - 1].nearShip = true;
+                    if (i == 0) {
+                        grid[position - 10].nearShip = true;
+                    }
+                    if (i == 1) {
+                        grid[position + (i * 10) + 10].nearShip = true;
+                    }
                 }
             } return shipType;
         }else if (shipType == "destroyer") {
@@ -59,11 +88,11 @@ const Gameboard = () => {
             //check for free positions
             for (let i = 0; i < 3; i++) {
                 if (orientation == "h") {
-                    if (grid[position + i].hasShip == false) continue;
-                    else if (grid[position + i].hasShip == true) return;
+                    if (grid[position + i].hasShip == false && grid[position + i].nearShip == false) continue;
+                    else if (grid[position + i].hasShip == true || grid[position + i].nearShip == true) return;
                 } else {
-                    if (grid[position + (i * 10)].hasShip == false) continue;
-                    else if (grid[position + (i * 10)].hasShip == true) return;
+                    if (grid[position + (i * 10)].hasShip == false && grid[position + (i * 10)].nearShip == false) continue;
+                    else if (grid[position + (i * 10)].hasShip == true || grid[position + (i * 10)].nearShip == true) return;
                 }
             }
             //place
@@ -72,9 +101,25 @@ const Gameboard = () => {
                 if (orientation == "h") { 
                     grid[position + i].hasShip = true;
                     grid[position + i].shipName = destroyer;
+                    grid[position + (i + 10)].nearShip = true;
+                    grid[position + (i - 10)].nearShip = true;
+                    if (i == 0) {
+                        grid[position - 1].nearShip = true;
+                    }
+                    if (i == 2) {
+                        grid[position + i + 1].nearShip = true;
+                    }
                 }else {
                     grid[position + (i * 10)].hasShip = true;
                     grid[position + (i * 10)].shipName = destroyer;
+                    grid[position + (i * 10) + 1].nearShip = true;
+                    grid[position + (i * 10) - 1].nearShip = true;
+                    if (i == 0) {
+                        grid[position - 10].nearShip = true;
+                    }
+                    if (i == 2) {
+                        grid[position + (i * 10) + 10].nearShip = true;
+                    }
                 }
             } return shipType;
         }else if (shipType == "battleship") {
@@ -83,11 +128,11 @@ const Gameboard = () => {
             //check for free positions
             for (let i = 0; i < 4; i++) {
                 if (orientation == "h") {
-                    if (grid[position + i].hasShip == false) continue;
-                    else if (grid[position + i].hasShip == true) return;
+                    if (grid[position + i].hasShip == false && grid[position + i].nearShip == false) continue;
+                    else if (grid[position + i].hasShip == true || grid[position + i].nearShip == true) return;
                 } else {
-                    if (grid[position + (i * 10)].hasShip == false) continue;
-                    else if (grid[position + (i * 10)].hasShip == true) return;
+                    if (grid[position + (i * 10)].hasShip == false && grid[position + (i * 10)].nearShip == false) continue;
+                    else if (grid[position + (i * 10)].hasShip == true || grid[position + (i * 10)].nearShip == true) return;
                 }
             }
             //place
@@ -96,9 +141,25 @@ const Gameboard = () => {
                 if (orientation == "h") { 
                     grid[position + i].hasShip = true;
                     grid[position + i].shipName = battleship;
+                    grid[position + (i + 10)].nearShip = true;
+                    grid[position + (i - 10)].nearShip = true;
+                    if (i == 0) {
+                        grid[position - 1].nearShip = true;
+                    }
+                    if (i == 3) {
+                        grid[position + i + 1].nearShip = true;
+                    }
                 }else {
                     grid[position + (i * 10)].hasShip = true;
                     grid[position + (i * 10)].shipName = battleship;
+                    grid[position + (i * 10) + 1].nearShip = true;
+                    grid[position + (i * 10) - 1].nearShip = true;
+                    if (i == 0) {
+                        grid[position - 10].nearShip = true;
+                    }
+                    if (i == 3) {
+                        grid[position + (i * 10) + 10].nearShip = true;
+                    }
                 }
             } return shipType;
         }else if (shipType == "carrier") {
@@ -107,21 +168,38 @@ const Gameboard = () => {
             //check for free positions
             for (let i = 0; i < 5; i++) {
                 if (orientation == "h") {
-                    if (grid[position + i].hasShip == false) continue;
-                    else if (grid[position + i].hasShip == true) return;
+                    if (grid[position + i].hasShip == false && grid[position + i].nearShip == false) continue;
+                    else if (grid[position + i].hasShip == true || grid[position + i].nearShip == true) return;
                 } else {
-                    if (grid[position + (i * 10)].hasShip == false) continue;
-                    else if (grid[position + (i * 10)].hasShip == true) return;
+                    if (grid[position + (i * 10)].hasShip == false && grid[position + (i * 10)].nearShip == false) continue;
+                    else if (grid[position + (i * 10)].hasShip == true || grid[position + (i * 10)].nearShip == true) return;
                 }
             }
+            //place
             const carrier = ship(5);
             for (let i = 0; i < 5; i++) {
                 if (orientation == "h") { 
                     grid[position + i].hasShip = true;
                     grid[position + i].shipName = carrier;
+                    grid[position + (i + 10)].nearShip = true;
+                    grid[position + (i - 10)].nearShip = true;
+                    if (i == 0) {
+                        grid[position - 1].nearShip = true;
+                    }
+                    if (i == 4) {
+                        grid[position + i + 1].nearShip = true;
+                    }
                 }else {
                     grid[position + (i * 10)].hasShip = true;
                     grid[position + (i * 10)].shipName = carrier;
+                    grid[position + (i * 10) + 1].nearShip = true;
+                    grid[position + (i * 10) - 1].nearShip = true;
+                    if (i == 0) {
+                        grid[position - 10].nearShip = true;
+                    }
+                    if (i == 4) {
+                        grid[position + (i * 10) + 10].nearShip = true;
+                    }
                 }
             } return shipType;
         }
