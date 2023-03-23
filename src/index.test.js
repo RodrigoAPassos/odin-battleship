@@ -21,99 +21,117 @@ describe.skip("Ship damage", () => {
 describe("Place Ship", () => {
     const gb1 = Gameboard();
     test("has patrol ship", ()=> {
-        expect(gb1.place(25, "h", "patrol")).toEqual(
-            expect(gb1.grid[25].hasShip).toBe(true)
+        expect(gb1.place(2, 5, "h", "patrol")).toEqual(
+            "patrol",
+            expect(gb1.grid[2][5].hasShip).toBe(true)
         )
     })
 
     test("has carrier ship", ()=> {
-        expect(gb1.place(61, "h", "carrier")).toEqual(
-            expect(gb1.grid[61].hasShip).toBe(true),
-            expect(gb1.grid[62].hasShip).toBe(true),
-            expect(gb1.grid[63].hasShip).toBe(true),
-            expect(gb1.grid[64].hasShip).toBe(true),
-            expect(gb1.grid[65].hasShip).toBe(true)
+        expect(gb1.place(6, 1, "h", "carrier")).toEqual(
+            "carrier",
+            expect(gb1.grid[6][1].hasShip).toBe(true),
+            expect(gb1.grid[6][2].hasShip).toBe(true),
+            expect(gb1.grid[6][3].hasShip).toBe(true),
+            expect(gb1.grid[6][4].hasShip).toBe(true),
+            expect(gb1.grid[6][5].hasShip).toBe(true)
         )
     })
 })
 
 describe("ReceiveAttack and allSunk test", () => {
     const gb2 = Gameboard();
-    gb2.place(63, "v", "submarine");
-    gb2.place(25, "h", "submarine");
+    gb2.place(6, 3, "v", "submarine");
+    gb2.place(2, 5, "h", "patrol");
     
     test("received attack and hit ship", ()=> {
-        expect(gb2.receiveAttack(63)).toEqual(
-            expect(gb2.grid[63].wasShot).toBe(true),
-            expect(gb2.grid[63].hasShip).toBe(true),
-            expect(gb2.grid[63].shipName.isSunk()).toBe(false)
+        expect(gb2.receiveAttack(6, 3)).toEqual(
+            "hit",
+            expect(gb2.grid[6][3].wasShot).toBe(true),
+            expect(gb2.grid[6][3].hasShip).toBe(true),
+            expect(gb2.grid[6][3].shipName.isSunk()).toBe(false)
         )
     })
 
     test("received attack and missed ship", ()=> {
-        expect(gb2.receiveAttack(64)).toEqual(
-            expect(gb2.grid[64].wasShot).toBe(true),
-            expect(gb2.grid[64].hasShip).toBe(false),
-            expect(gb2.grid[63].shipName.isSunk()).toBe(false)
+        expect(gb2.receiveAttack(6, 4)).toEqual(
+            "miss",
+            expect(gb2.grid[6][4].wasShot).toBe(true),
+            expect(gb2.grid[6][4].hasShip).toBe(false),
+            expect(gb2.grid[6][3].shipName.isSunk()).toBe(false)
         )
     })
 
     test("received attack and sunk ship", ()=> {
-        expect(gb2.receiveAttack(73)).toEqual(
-            expect(gb2.grid[73].wasShot).toBe(true),
-            expect(gb2.grid[73].hasShip).toBe(true),
-            expect(gb2.grid[63].shipName.isSunk()).toBe(true),
-            expect(gb2.grid[73].shipName.isSunk()).toBe(true)
+        expect(gb2.receiveAttack(7, 3)).toEqual(
+            "hit",
+            expect(gb2.grid[7][3].wasShot).toBe(true),
+            expect(gb2.grid[7][3].hasShip).toBe(true),
+            expect(gb2.grid[6][3].shipName.isSunk()).toBe(true),
+            expect(gb2.grid[7][3].shipName.isSunk()).toBe(true)
         )
     })
 
     test("Another submarine not hit", ()=> {
-        expect(gb2.grid[25].hasShip).toBe(true),
-        expect(gb2.grid[25].wasShot).toBe(false),
-        expect(gb2.grid[25].shipName.isSunk()).toBe(false)
+        expect(gb2.grid[2][5].hasShip).toBe(true),
+        expect(gb2.grid[2][5].wasShot).toBe(false),
+        expect(gb2.grid[2][5].shipName.isSunk()).toBe(false)
     })
 
     test("AllSunk", ()=> {
         expect(gb2.checkAllSunk()).toBe(false)
     })
+
+    test("received attack and sunk last ship", ()=> {
+        expect(gb2.receiveAttack(2, 5)).toEqual(
+            "hit",
+            expect(gb2.grid[2][5].wasShot).toBe(true),
+            expect(gb2.grid[2][5].hasShip).toBe(true),
+            expect(gb2.grid[2][5].shipName.isSunk()).toBe(true)
+        )
+    })
+
+    test("Try again AllSunk", ()=> {
+        expect(gb2.checkAllSunk()).toBe(true)
+    })
 })
 
-describe.only("Player tests", ()=> {
+describe("Player tests", ()=> {
     const player1 = Player();
     const player2 = Player();
-    player1.Gameboard.place(25, "v", "submarine");
-    player1.Gameboard.place(61, "h", "carrier");
-    player2.Gameboard.place(35, "v", "submarine");
-    player2.Gameboard.place(71, "h", "carrier");
+    player1.Gameboard.place(2, 5, "v", "submarine");
+    player1.Gameboard.place(6, 1, "h", "carrier");
+    player2.Gameboard.place(2, 5, "h", "submarine");
+    player2.Gameboard.place(7, 1, "h", "carrier");
 
 
     test("2 ships for each player", ()=> {
-        expect(player1.Gameboard.grid[35].hasShip).toBe(true),
-        expect(player1.Gameboard.grid[64].hasShip).toBe(true),
-        expect(player2.Gameboard.grid[25].hasShip).toBe(false),
-        expect(player2.Gameboard.grid[45].hasShip).toBe(true),
-        expect(player2.Gameboard.grid[61].hasShip).toBe(false),
-        expect(player2.Gameboard.grid[74].hasShip).toBe(true)
+        expect(player1.Gameboard.grid[3][5].hasShip).toBe(true),
+        expect(player1.Gameboard.grid[6][4].hasShip).toBe(true),
+        expect(player2.Gameboard.grid[2][5].hasShip).toBe(true),
+        expect(player2.Gameboard.grid[4][5].hasShip).toBe(false),
+        expect(player2.Gameboard.grid[6][1].hasShip).toBe(false),
+        expect(player2.Gameboard.grid[7][4].hasShip).toBe(true)
     })
 
     test("player1 attack player2", ()=> {
-        expect(player1.attackPlayer(25, player2)).toEqual(
-            "valid attack",
-            expect(player2.Gameboard.grid[25].wasShot).toBe(true)
+        expect(player1.attackPlayer(2, 5, player2)).toEqual(
+            "valid hit attack",
+            expect(player2.Gameboard.grid[2][5].wasShot).toBe(true)
         )
     })
 
     test("player1 invalid attack player2", ()=> {
-        expect(player1.attackPlayer(25, player2)).toEqual(
+        expect(player1.attackPlayer(2, 5, player2)).toEqual(
             "invalid attack",
-            expect(player2.Gameboard.grid[25].wasShot).toBe(true)
+            expect(player2.Gameboard.grid[2][5].wasShot).toBe(true)
         )
     })
 
     test("player2 attack and sunk submarine of player1", ()=> {
-        player2.attackPlayer(25, player1);
-        player2.attackPlayer(35, player1);
-        expect(player1.Gameboard.grid[25].shipName.isSunk()).toBe(true),
-        expect(player1.Gameboard.grid[35].shipName.isSunk()).toBe(true)
+        player2.attackPlayer(2, 5, player1);
+        player2.attackPlayer(3, 5, player1);
+        expect(player1.Gameboard.grid[2][5].shipName.isSunk()).toBe(true),
+        expect(player1.Gameboard.grid[3][5].shipName.isSunk()).toBe(true)
     })
 })

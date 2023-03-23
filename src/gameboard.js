@@ -69,8 +69,8 @@ const Gameboard = () => {
                 }else {
                     grid[x][y + i].hasShip = true;
                     grid[x][y + i].shipName = submarine;
-                    if ([x + 1] in grid && [y + i] in grid[x + i]) grid[x + 1][y + i].nearShip = true; //up
-                    if ([x - 1] in grid && [y + i] in grid[x + i]) grid[x - 1][y + i].nearShip = true; //down
+                    if ([x + 1] in grid && [y + i] in grid[x + 1]) grid[x + 1][y + i].nearShip = true; //up
+                    if ([x - 1] in grid && [y + i] in grid[x - 1]) grid[x - 1][y + i].nearShip = true; //down
                     if ([x] in grid && [y + 2] in grid[x]) grid[x][y + 2].nearShip = true; //after
                     if ([x] in grid && [y - 1] in grid[x]) grid[x][y - 1].nearShip = true; //before
                 }
@@ -101,8 +101,8 @@ const Gameboard = () => {
                 }else {
                     grid[x][y + i].hasShip = true;
                     grid[x][y + i].shipName = destroyer;
-                    if ([x + 1] in grid && [y + i] in grid[x + i]) grid[x + 1][y + i].nearShip = true; //up
-                    if ([x - 1] in grid && [y + i] in grid[x + i]) grid[x - 1][y + i].nearShip = true; //down
+                    if ([x + 1] in grid && [y + i] in grid[x + 1]) grid[x + 1][y + i].nearShip = true; //up
+                    if ([x - 1] in grid && [y + i] in grid[x - 1]) grid[x - 1][y + i].nearShip = true; //down
                     if ([x] in grid && [y + 3] in grid[x]) grid[x][y + 3].nearShip = true; //after
                     if ([x] in grid && [y - 1] in grid[x]) grid[x][y - 1].nearShip = true; //before
                 }
@@ -133,8 +133,8 @@ const Gameboard = () => {
                 }else {
                     grid[x][y + i].hasShip = true;
                     grid[x][y + i].shipName = battleship;
-                    if ([x + 1] in grid && [y + i] in grid[x + i]) grid[x + 1][y + i].nearShip = true; //up
-                    if ([x - 1] in grid && [y + i] in grid[x + i]) grid[x - 1][y + i].nearShip = true; //down
+                    if ([x + 1] in grid && [y + i] in grid[x + 1]) grid[x + 1][y + i].nearShip = true; //up
+                    if ([x - 1] in grid && [y + i] in grid[x - 1]) grid[x - 1][y + i].nearShip = true; //down
                     if ([x] in grid && [y + 4] in grid[x]) grid[x][y + 4].nearShip = true; //after
                     if ([x] in grid && [y - 1] in grid[x]) grid[x][y - 1].nearShip = true; //before
                 }
@@ -165,8 +165,8 @@ const Gameboard = () => {
                 }else {
                     grid[x][y + i].hasShip = true;
                     grid[x][y + i].shipName = carrier;
-                    if ([x + 1] in grid && [y + i] in grid[x + i]) grid[x + 1][y + i].nearShip = true; //up
-                    if ([x - 1] in grid && [y + i] in grid[x + i]) grid[x - 1][y + i].nearShip = true; //down
+                    if ([x + 1] in grid && [y + i] in grid[x + 1]) grid[x + 1][y + i].nearShip = true; //up
+                    if ([x - 1] in grid && [y + i] in grid[x - 1]) grid[x - 1][y + i].nearShip = true; //down
                     if ([x] in grid && [y + 5] in grid[x]) grid[x][y + 5].nearShip = true; //after
                     if ([x] in grid && [y - 1] in grid[x]) grid[x][y - 1].nearShip = true; //before
                 }
@@ -186,7 +186,7 @@ const Gameboard = () => {
     }
 
     const checkAllSunk = () => {
-        return grid.forEach((row) => {row.filter(cell => cell.shipName != null).every(ships => ships.shipName.isSunk() == true)});
+        return grid.every(row => row.filter(cell => cell.shipName != null).every(ships => ships.shipName.isSunk() == true));
     }
 
     return {grid, place, receiveAttack, checkAllSunk}

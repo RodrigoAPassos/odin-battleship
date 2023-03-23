@@ -86,8 +86,8 @@ const displayBoards = (p1, p2, gameType) => {
             p2.Gameboard.place(0, 4, "v", "patrol");
             p2.Gameboard.place(0, 0, "v", "submarine");
             p2.Gameboard.place(2, 4, "h", "destroyer");
-            p2.Gameboard.place(6, 4, "h", "battleship");
-            p2.Gameboard.place(5, 4, "h", "carrier");
+            p2.Gameboard.place(5, 4, "h", "battleship");
+            p2.Gameboard.place(7, 4, "h", "carrier");
 
             displayBoards(p1, p2, "pvc");
         }
