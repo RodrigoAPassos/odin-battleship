@@ -3,44 +3,47 @@ import gameboard from "./gameboard";
 const player = () => {
     const Gameboard = gameboard();
     let legalMove = null;
-    let lastHit = null;
-    let firstHit = null;
+    let lastHit = [];
+    let firstHit = [];
     let tries = 0;
 
-    const attackPlayer = (target, playerName) => {
-        if (playerName.Gameboard.grid[target].wasShot == false) {
-            let shot = playerName.Gameboard.receiveAttack(target);
+    const attackPlayer = (x, y, playerName) => {
+        if (playerName.Gameboard.grid[x][y].wasShot == false) {
+            let shot = playerName.Gameboard.receiveAttack(x, y);
             if (shot == "hit") return "valid hit attack";
             else return "valid miss attack"
         }else return "invalid attack"
     }
 
     const computerAttack = (targetPlayer) => {
-        if (lastHit == null) {
-            let randomTarget = Math.floor(Math.random() * 100);
-            legalMove = attackPlayer(randomTarget, targetPlayer);
+        if (lastHit.length == 0) {
+            let randomX = Math.floor(Math.random() * 10);
+            let randomY = Math.floor(Math.random() * 10);
+            legalMove = attackPlayer(randomX, randomY, targetPlayer);
             if (legalMove == "valid hit attack") {
-                lastHit = randomTarget;
-                firstHit = randomTarget;
+                lastHit.push(randomX, randomY);
+                firstHit.push(randomX, randomY);
             } else {
                 while (legalMove == "invalid attack"){
                     computerAttack(targetPlayer);
                 }
             }
         }else {
-            if (targetPlayer.Gameboard.grid[lastHit].shipName.isSunk() == false) {
-                let legalTarget;
+            if (targetPlayer.Gameboard.grid[lastHit[0]][lastHit[1]].shipName.isSunk() == false) {
+                let legalX;
+                let legalY;
                 switch (tries) {
                     case 0:
-                        legalTarget = lastHit + 1;
-                        if (legalTarget < 100) {
-                            legalMove = attackPlayer(legalTarget, targetPlayer)
+                        legalX = lastHit[0] + 1;
+                        legalY = lastHit[1];
+                        if (targetPlayer.Gameboard.grid[legalX][legalY]) {
+                            legalMove = attackPlayer(legalX, legalY, targetPlayer)
                         } else {
                             tries++;
                             computerAttack(targetPlayer);
                         }
                         if (legalMove == "valid hit attack") {
-                            lastHit = legalTarget;
+                            lastHit[0] = legalX;
                         } else if (legalMove == "valid miss attack") {
                             tries++;
                         }else {
@@ -49,11 +52,11 @@ const player = () => {
                         }
                         break;
                     case 1:
-                        legalTarget = firstHit - 1;
-                        legalTarget < 100 && legalTarget >= 0 ? 
-                        legalMove = attackPlayer(legalTarget, targetPlayer) : tries++;
+                        legalX = firstHit[0] - 1;
+                        legalY = firstHit[1];
+                        legalX >= 0 ? legalMove = attackPlayer(legalX, legalY, targetPlayer) : tries++;
                         if (legalMove == "valid hit attack") {
-                            firstHit = legalTarget;
+                            firstHit[0] = legalX;
                         } else if (legalMove == "valid miss attack") {
                             tries++;
                         }else {
@@ -62,15 +65,16 @@ const player = () => {
                         }
                         break;
                     case 2:
-                        legalTarget = lastHit + 10;
-                        if (legalTarget < 100) {
-                            legalMove = attackPlayer(legalTarget, targetPlayer)
+                        legalX = lastHit[0];
+                        legalY = lastHit[1] + 1;
+                        if (legalY < 10) {
+                            legalMove = attackPlayer(legalX, legalY, targetPlayer)
                         } else {
                             tries++;
                             computerAttack(targetPlayer);
                         }
                         if (legalMove == "valid hit attack") {
-                            lastHit = legalTarget;
+                            lastHit[1] = legalY;
                         } else if (legalMove == "valid miss attack") {
                             tries++;
                         }else {
@@ -79,16 +83,17 @@ const player = () => {
                         }
                         break;
                     case 3:
-                        legalTarget = firstHit - 10;
-                        if (legalTarget >= 0) {legalMove = attackPlayer(legalTarget, targetPlayer)};
+                        legalX = firstHit[0];
+                        legalY = firstHit[1] - 1;
+                        if (legalY >= 0) {legalMove = attackPlayer(legalX, legalY, targetPlayer)};
                         if (legalMove == "valid hit attack") {
-                            firstHit = legalTarget;
+                            firstHit[1] = legalY;
                         }
                         break;
                 }
             }else {
-                lastHit = null;
-                firstHit = null;
+                lastHit = [];
+                firstHit = [];
                 tries = 0;
                 computerAttack(targetPlayer);
             };

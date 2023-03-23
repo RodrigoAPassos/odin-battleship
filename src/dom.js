@@ -29,35 +29,42 @@ const displayBoards = (p1, p2, gameType) => {
             shipBoards1.removeChild(shipBoards1.firstChild);
         }
         //Show player board of ships
-        for (let element of p1.Gameboard.grid) {
-            const cell = document.createElement("div");
-            cell.classList.add("cell");
-            cell.setAttribute("data-index", p1.Gameboard.grid.indexOf(element));
+        p1.Gameboard.grid.forEach((row) => {
+            row.forEach((element) => {
+                const cell = document.createElement("div");
+                cell.classList.add("cell");
+                let indexX = p1.Gameboard.grid.indexOf(row);
+                let indexY = row.indexOf(element);
+                cell.setAttribute("data-indexX", indexX);
+                cell.setAttribute("data-indexY", indexY);
+                
+                if (element.hasShip == true) cell.classList.add("hasShip");
+                if (element.wasShot == true && element.hasShip == false) cell.classList.add("waterHit");
+                if (element.wasShot == true && element.hasShip == true) cell.classList.add("shipHit");
+                if (element.shipName != null && element.shipName.isSunk() == true) cell.classList.add("shipSunk");
+                if (element.hasShip == false) {
+                    cell.addEventListener("drop", function dropToPlace (ev) {
+                        ev.preventDefault();
+                        let shipType = ev.dataTransfer.getData("text");
+                        let orientation = document.getElementById(shipType).getAttribute("data-orientation");
+                        let indexX = ev.target.getAttribute("data-indexX");
+                        let indexY = ev.target.getAttribute("data-indexY");
+                        let shipPlaced = p1.Gameboard.place(Number(indexX), Number(indexY), orientation, shipType);
+                        listOfShips.push(shipPlaced);
+                        displayBoards(p1, p2, "pvcPlace");
+                    });
+                    cell.addEventListener("dragover", function allowDrop (ev) {
+                        if (p1.Gameboard.grid[ev.target.getAttribute("data-indexX")][ev.target.getAttribute("data-indexY")].hasShip == true || 
+                            p1.Gameboard.grid[ev.target.getAttribute("data-indexX")][ev.target.getAttribute("data-indexY")].nearShip == true) {
+                                ev.target.style.border = "1px dashed red";
+                        }
+                        ev.preventDefault();
+                    });
+                }
+                shipBoards1.appendChild(cell);
+            });
+        });
 
-            if (element.hasShip == true) cell.classList.add("hasShip");
-            if (element.wasShot == true && element.hasShip == false) cell.classList.add("waterHit");
-            if (element.wasShot == true && element.hasShip == true) cell.classList.add("shipHit");
-            if (element.shipName != null && element.shipName.isSunk() == true) cell.classList.add("shipSunk");
-            if (element.hasShip == false) {
-                cell.addEventListener("drop", function dropToPlace (ev) {
-                    ev.preventDefault();
-                    let shipType = ev.dataTransfer.getData("text");
-                    let orientation = document.getElementById(shipType).getAttribute("data-orientation");
-                    let index = ev.target.getAttribute("data-index");
-                    let shipPlaced = p1.Gameboard.place(Number(index), orientation, shipType);
-                    listOfShips.push(shipPlaced);
-                    displayBoards(p1, p2, "pvcPlace");
-                });
-                cell.addEventListener("dragover", function allowDrop (ev) {
-                    if (p1.Gameboard.grid[ev.target.getAttribute("data-index")].hasShip == true || 
-                        p1.Gameboard.grid[ev.target.getAttribute("data-index")].nearShip == true) {
-                            ev.target.style.border = "1px dashed red";
-                    }
-                    ev.preventDefault();
-                });
-            }
-            shipBoards1.appendChild(cell);
-        }
         if (allShipsList.every(ship => {return listOfShips.includes(ship)}) == true) {
             //remove options of ships from earlier step
             while (loading.firstChild){
@@ -76,11 +83,11 @@ const displayBoards = (p1, p2, gameType) => {
             loading.appendChild(boardName2);
 
             //place computer ships
-            p2.Gameboard.place(4, "v", "patrol");
-            p2.Gameboard.place(0, "v", "submarine");
-            p2.Gameboard.place(24, "h", "destroyer");
-            p2.Gameboard.place(74, "h", "battleship");
-            p2.Gameboard.place(54, "h", "carrier");
+            p2.Gameboard.place(0, 4, "v", "patrol");
+            p2.Gameboard.place(0, 0, "v", "submarine");
+            p2.Gameboard.place(2, 4, "h", "destroyer");
+            p2.Gameboard.place(6, 4, "h", "battleship");
+            p2.Gameboard.place(5, 4, "h", "carrier");
 
             displayBoards(p1, p2, "pvc");
         }
@@ -102,35 +109,47 @@ const displayBoards = (p1, p2, gameType) => {
         }
 
         //board of ships
-        for (let element of p1.Gameboard.grid) {
-            const cell = document.createElement("div");
-            cell.classList.add("cell");
-            cell.setAttribute("data-index", p1.Gameboard.grid.indexOf(element));
-            if (element.hasShip == true) cell.classList.add("hasShip");
-            if (element.wasShot == true && element.hasShip == false) cell.classList.add("waterHit");
-            if (element.wasShot == true && element.hasShip == true) cell.classList.add("shipHit");
-            if (element.shipName != null && element.shipName.isSunk() == true) cell.classList.add("shipSunk");
-            shipBoards1.appendChild(cell);
-        }
+        p1.Gameboard.grid.forEach((row) => {
+            row.forEach((element) => {
+                const cell = document.createElement("div");
+                cell.classList.add("cell");
+                let indexX = p1.Gameboard.grid.indexOf(row);
+                let indexY = row.indexOf(element);
+                cell.setAttribute("data-indexY", indexY);
+                cell.setAttribute("data-indexX", indexX);
+                if (element.hasShip == true) cell.classList.add("hasShip");
+                if (element.wasShot == true && element.hasShip == false) cell.classList.add("waterHit");
+                if (element.wasShot == true && element.hasShip == true) cell.classList.add("shipHit");
+                if (element.shipName != null && element.shipName.isSunk() == true) cell.classList.add("shipSunk");
+                shipBoards1.appendChild(cell);
+            })
+        })
+        
 
         //board of attacks
-        for (let element of p2.Gameboard.grid) {
-            const cell = document.createElement("div");
-            cell.classList.add("cell");
-            cell.setAttribute("data-index", p2.Gameboard.grid.indexOf(element));
-            if (element.wasShot == true && element.hasShip == true) cell.classList.add("shipHit");
-            if (element.wasShot == true && element.hasShip == false) cell.classList.add("waterHit");
-            if (element.shipName != null && element.shipName.isSunk() == true) cell.classList.add("shipSunk");
-            if (element.wasShot == false) {
-                cell.addEventListener("click", ()=> {
-                    p1.attackPlayer(cell.getAttribute("data-index"), p2);
-                    p2.computerAttack(p1);
-                    displayBoards(p1, p2, "pvc");
-                    checkWinner(p1, p2);
-                });
-            }
-            attackBoard1.appendChild(cell);
-        }
+        p2.Gameboard.grid.forEach((row) => {
+            row.forEach((element) => {
+                const cell = document.createElement("div");
+                cell.classList.add("cell");
+                let indexX = p2.Gameboard.grid.indexOf(row);
+                let indexY = row.indexOf(element);
+                cell.setAttribute("data-indexX", indexX);
+                cell.setAttribute("data-indexY", indexY);
+                
+                if (element.wasShot == true && element.hasShip == true) cell.classList.add("shipHit");
+                if (element.wasShot == true && element.hasShip == false) cell.classList.add("waterHit");
+                if (element.shipName != null && element.shipName.isSunk() == true) cell.classList.add("shipSunk");
+                if (element.wasShot == false) {
+                    cell.addEventListener("click", ()=> {
+                        p1.attackPlayer(cell.getAttribute("data-indexX"), cell.getAttribute("data-indexY"), p2);
+                        p2.computerAttack(p1);
+                        displayBoards(p1, p2, "pvc");
+                        checkWinner(p1, p2);
+                    });
+                }
+                attackBoard1.appendChild(cell);
+            })
+        })
 
         break;
         case "pvp":

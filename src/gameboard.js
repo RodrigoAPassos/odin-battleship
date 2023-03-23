@@ -2,222 +2,191 @@ import ship from "./ship";
 
 const Gameboard = () => {
     const grid = [];
+    const size = 10;
 
-    for (let i = 0; i < 100; i++) {
-        grid.push({hasShip: false, nearShip: false, shipName: null, wasShot: false});
+    for (let i = 0; i < size; i++) {
+        grid[i] = [];
+        for (let j = 0;j < size; j++){
+            grid[i][j] = {hasShip: false, nearShip: false, shipName: null, wasShot: false};
+        }
     }
 
-    const place = (position, orientation, shipType) => {
+    const place = (x, y, orientation, shipType) => {
         if (shipType == "patrol") {
             //check for free positions
             for (let i = 0; i < 1; i++) {
-                if (orientation == "h") {
-                    if (grid[position + i].hasShip == false && grid[position + i].nearShip == false) continue;
-                    else if (grid[position + i].hasShip == true || grid[position + i].nearShip == true) return;
+                if (orientation == "v") {
+                    if (grid[x + i][y].hasShip == false && grid[x + i][y].nearShip == false) continue;
+                    else if (grid[x + i][y].hasShip == true || grid[x + i][y].nearShip == true) return;
                 } else {
-                    if (grid[position + (i * 10)].hasShip == false && grid[position + (i * 10)].nearShip == false) continue;
-                    else if (grid[position + (i * 10)].hasShip == true || grid[position + (i * 10)].nearShip == true) return;
+                    if (grid[x][y + i].hasShip == false && grid[x][y + i].nearShip == false) continue;
+                    else if (grid[x][y + i].hasShip == true || grid[x][y + i].nearShip == true) return;
                 }
             }
             const patrol = ship(1);
             //place
             for (let i = 0; i < 1; i++) {
-                if (orientation == "h") { 
-                    grid[position + i].hasShip = true;
-                    grid[position + i].shipName = patrol;
-                    if ((position + (i + 10)) < 100) grid[position + (i + 10)].nearShip = true;
-                    if ((position + (i - 10)) > 0) grid[position + (i - 10)].nearShip = true;
-                    if (i == 0) {
-                        if ((position - 1) > 0) grid[position - 1].nearShip = true;
-                        if ((position + i + 1) < 100) grid[position + i + 1].nearShip = true;
-                    }
+                if (orientation == "v") { 
+                    grid[x + i][y].hasShip = true;
+                    grid[x + i][y].shipName = patrol;
+                    if ([x + i] in grid && [y + 1] in grid[x + i]) grid[x + i][y + 1].nearShip = true;
+                    if ([x + i] in grid && [y - 1] in grid[x + i]) grid[x + i][y - 1].nearShip = true;
+                    if ([x + 1] in grid && [y] in grid[x + 1]) grid[x + 1][y].nearShip = true;
+                    if ([x - 1] in grid && [y] in grid[x - 1]) grid[x - 1][y].nearShip = true;
                 }else {
-                    grid[position + (i * 10)].hasShip = true;
-                    grid[position + (i * 10)].shipName = patrol;
-                    grid[position + (i * 10) + 1].nearShip = true;
-                    grid[position + (i * 10) - 1].nearShip = true;
-                    if (i == 0) {
-                        grid[position - 10].nearShip = true;
-                        grid[position + (i * 10) + 10].nearShip = true;
-                    }
+                    grid[x][y + i].hasShip = true;
+                    grid[x][y + i].shipName = patrol;
+                    if ([x + i] in grid && [y + 1] in grid[x + i]) grid[x + i][y + 1].nearShip = true;
+                    if ([x + i] in grid && [y - 1] in grid[x + i]) grid[x + i][y - 1].nearShip = true;
+                    if ([x + 1] in grid && [y] in grid[x + 1]) grid[x + 1][y].nearShip = true;
+                    if ([x - 1] in grid && [y] in grid[x - 1]) grid[x - 1][y].nearShip = true;
                 }
             } return shipType;
-        }else if (shipType == "submarine") {
-            if (orientation == "h" && /[9]$/.test(position)) return;
-            if (orientation == "v" && position > 89) return;
+        }
+        else if (shipType == "submarine") {
+            if (orientation == "h" && y >= 9) return;
+            if (orientation == "v" && x >= 9) return;
             //check for free positions
             for (let i = 0; i < 2; i++) {
-                if (orientation == "h") {
-                    if (grid[position + i].hasShip == false && grid[position + i].nearShip == false) continue;
-                    else if (grid[position + i].hasShip == true || grid[position + i].nearShip == true) return;
+                if (orientation == "v") {
+                    if (grid[x + i][y].hasShip == false && grid[x + i][y].nearShip == false) continue;
+                    else if (grid[x + i][y].hasShip == true || grid[x + i][y].nearShip == true) return;
                 } else {
-                    if (grid[position + (i * 10)].hasShip == false && grid[position + (i * 10)].nearShip == false) continue;
-                    else if (grid[position + (i * 10)].hasShip == true || grid[position + (i * 10)].nearShip == true) return;
+                    if (grid[x][y + i].hasShip == false && grid[x][y + i].nearShip == false) continue;
+                    else if (grid[x][y + i].hasShip == true || grid[x][y + i].nearShip == true) return;
                 }
             }
             //place
             const submarine = ship(2);
             for (let i = 0; i < 2; i++) {
-                if (orientation == "h") { 
-                    grid[position + i].hasShip = true;
-                    grid[position + i].shipName = submarine;
-                    grid[position + (i + 10)].nearShip = true;
-                    grid[position + (i - 10)].nearShip = true;
-                    if (i == 0) {
-                        grid[position - 1].nearShip = true;
-                    }
-                    if (i == 1) {
-                        grid[position + i + 1].nearShip = true;
-                    }
+                if (orientation == "v") { 
+                    grid[x + i][y].hasShip = true;
+                    grid[x + i][y].shipName = submarine;
+                    if ([x + i] in grid && [y + 1] in grid[x + i]) grid[x + i][y + 1].nearShip = true; //->
+                    if ([x + i] in grid && [y - 1] in grid[x + i]) grid[x + i][y - 1].nearShip = true; //<-
+                    if ([x + 2] in grid && [y] in grid[x + 2]) grid[x + 2][y].nearShip = true; //after
+                    if ([x - 1] in grid && [y] in grid[x - 1]) grid[x - 1][y].nearShip = true; //before
                 }else {
-                    grid[position + (i * 10)].hasShip = true;
-                    grid[position + (i * 10)].shipName = submarine;
-                    grid[position + (i * 10) + 1].nearShip = true;
-                    grid[position + (i * 10) - 1].nearShip = true;
-                    if (i == 0) {
-                        grid[position - 10].nearShip = true;
-                    }
-                    if (i == 1) {
-                        grid[position + (i * 10) + 10].nearShip = true;
-                    }
+                    grid[x][y + i].hasShip = true;
+                    grid[x][y + i].shipName = submarine;
+                    if ([x + 1] in grid && [y + i] in grid[x + i]) grid[x + 1][y + i].nearShip = true; //up
+                    if ([x - 1] in grid && [y + i] in grid[x + i]) grid[x - 1][y + i].nearShip = true; //down
+                    if ([x] in grid && [y + 2] in grid[x]) grid[x][y + 2].nearShip = true; //after
+                    if ([x] in grid && [y - 1] in grid[x]) grid[x][y - 1].nearShip = true; //before
                 }
             } return shipType;
         }else if (shipType == "destroyer") {
-            if (orientation == "h" && /[8-9]$/.test(position)) return;
-            if (orientation == "v" && position > 79) return;
+            if (orientation == "h" && y >= 8) return;
+            if (orientation == "v" && x >= 8) return;
             //check for free positions
             for (let i = 0; i < 3; i++) {
-                if (orientation == "h") {
-                    if (grid[position + i].hasShip == false && grid[position + i].nearShip == false) continue;
-                    else if (grid[position + i].hasShip == true || grid[position + i].nearShip == true) return;
+                if (orientation == "v") {
+                    if (grid[x + i][y].hasShip == false && grid[x + i][y].nearShip == false) continue;
+                    else if (grid[x + i][y].hasShip == true || grid[x + i][y].nearShip == true) return;
                 } else {
-                    if (grid[position + (i * 10)].hasShip == false && grid[position + (i * 10)].nearShip == false) continue;
-                    else if (grid[position + (i * 10)].hasShip == true || grid[position + (i * 10)].nearShip == true) return;
+                    if (grid[x][y + i].hasShip == false && grid[x][y + i].nearShip == false) continue;
+                    else if (grid[x][y + i].hasShip == true || grid[x][y + i].nearShip == true) return;
                 }
             }
             //place
             const destroyer = ship(3);
             for (let i = 0; i < 3; i++) {
-                if (orientation == "h") { 
-                    grid[position + i].hasShip = true;
-                    grid[position + i].shipName = destroyer;
-                    grid[position + (i + 10)].nearShip = true;
-                    grid[position + (i - 10)].nearShip = true;
-                    if (i == 0) {
-                        grid[position - 1].nearShip = true;
-                    }
-                    if (i == 2) {
-                        grid[position + i + 1].nearShip = true;
-                    }
+                if (orientation == "v") { 
+                    grid[x + i][y].hasShip = true;
+                    grid[x + i][y].shipName = destroyer;
+                    if ([x + i] in grid && [y + 1] in grid[x + i]) grid[x + i][y + 1].nearShip = true; //->
+                    if ([x + i] in grid && [y - 1] in grid[x + i]) grid[x + i][y - 1].nearShip = true; //<-
+                    if ([x + 3] in grid && [y] in grid[x + 3]) grid[x + 3][y].nearShip = true; //after
+                    if ([x - 1] in grid && [y] in grid[x - 1]) grid[x - 1][y].nearShip = true; //before
                 }else {
-                    grid[position + (i * 10)].hasShip = true;
-                    grid[position + (i * 10)].shipName = destroyer;
-                    grid[position + (i * 10) + 1].nearShip = true;
-                    grid[position + (i * 10) - 1].nearShip = true;
-                    if (i == 0) {
-                        grid[position - 10].nearShip = true;
-                    }
-                    if (i == 2) {
-                        grid[position + (i * 10) + 10].nearShip = true;
-                    }
+                    grid[x][y + i].hasShip = true;
+                    grid[x][y + i].shipName = destroyer;
+                    if ([x + 1] in grid && [y + i] in grid[x + i]) grid[x + 1][y + i].nearShip = true; //up
+                    if ([x - 1] in grid && [y + i] in grid[x + i]) grid[x - 1][y + i].nearShip = true; //down
+                    if ([x] in grid && [y + 3] in grid[x]) grid[x][y + 3].nearShip = true; //after
+                    if ([x] in grid && [y - 1] in grid[x]) grid[x][y - 1].nearShip = true; //before
                 }
             } return shipType;
         }else if (shipType == "battleship") {
-            if (orientation == "h" && /[7-9]$/.test(position)) return;
-            if (orientation == "v" && position > 69) return;
+            if (orientation == "h" && y >= 7) return;
+            if (orientation == "v" && x >= 7) return;
             //check for free positions
             for (let i = 0; i < 4; i++) {
-                if (orientation == "h") {
-                    if (grid[position + i].hasShip == false && grid[position + i].nearShip == false) continue;
-                    else if (grid[position + i].hasShip == true || grid[position + i].nearShip == true) return;
+                if (orientation == "v") {
+                    if (grid[x + i][y].hasShip == false && grid[x + i][y].nearShip == false) continue;
+                    else if (grid[x + i][y].hasShip == true || grid[x + i][y].nearShip == true) return;
                 } else {
-                    if (grid[position + (i * 10)].hasShip == false && grid[position + (i * 10)].nearShip == false) continue;
-                    else if (grid[position + (i * 10)].hasShip == true || grid[position + (i * 10)].nearShip == true) return;
+                    if (grid[x][y + i].hasShip == false && grid[x][y + i].nearShip == false) continue;
+                    else if (grid[x][y + i].hasShip == true || grid[x][y + i].nearShip == true) return;
                 }
             }
             //place
             const battleship = ship(4);
             for (let i = 0; i < 4; i++) {
-                if (orientation == "h") { 
-                    grid[position + i].hasShip = true;
-                    grid[position + i].shipName = battleship;
-                    grid[position + (i + 10)].nearShip = true;
-                    grid[position + (i - 10)].nearShip = true;
-                    if (i == 0) {
-                        grid[position - 1].nearShip = true;
-                    }
-                    if (i == 3) {
-                        grid[position + i + 1].nearShip = true;
-                    }
+                if (orientation == "v") { 
+                    grid[x + i][y].hasShip = true;
+                    grid[x + i][y].shipName = battleship;
+                    if ([x + i] in grid && [y + 1] in grid[x + i]) grid[x + i][y + 1].nearShip = true; //->
+                    if ([x + i] in grid && [y - 1] in grid[x + i]) grid[x + i][y - 1].nearShip = true; //<-
+                    if ([x + 4] in grid && [y] in grid[x + 4]) grid[x + 4][y].nearShip = true; //after
+                    if ([x - 1] in grid && [y] in grid[x - 1]) grid[x - 1][y].nearShip = true; //before
                 }else {
-                    grid[position + (i * 10)].hasShip = true;
-                    grid[position + (i * 10)].shipName = battleship;
-                    grid[position + (i * 10) + 1].nearShip = true;
-                    grid[position + (i * 10) - 1].nearShip = true;
-                    if (i == 0) {
-                        grid[position - 10].nearShip = true;
-                    }
-                    if (i == 3) {
-                        grid[position + (i * 10) + 10].nearShip = true;
-                    }
+                    grid[x][y + i].hasShip = true;
+                    grid[x][y + i].shipName = battleship;
+                    if ([x + 1] in grid && [y + i] in grid[x + i]) grid[x + 1][y + i].nearShip = true; //up
+                    if ([x - 1] in grid && [y + i] in grid[x + i]) grid[x - 1][y + i].nearShip = true; //down
+                    if ([x] in grid && [y + 4] in grid[x]) grid[x][y + 4].nearShip = true; //after
+                    if ([x] in grid && [y - 1] in grid[x]) grid[x][y - 1].nearShip = true; //before
                 }
             } return shipType;
         }else if (shipType == "carrier") {
-            if (orientation == "h" && /[6-9]$/.test(position)) return;
-            if (orientation == "v" && position > 59) return;
+            if (orientation == "h" && y >= 6) return;
+            if (orientation == "v" && x >= 6) return;
             //check for free positions
             for (let i = 0; i < 5; i++) {
-                if (orientation == "h") {
-                    if (grid[position + i].hasShip == false && grid[position + i].nearShip == false) continue;
-                    else if (grid[position + i].hasShip == true || grid[position + i].nearShip == true) return;
+                if (orientation == "v") {
+                    if (grid[x + i][y].hasShip == false && grid[x + i][y].nearShip == false) continue;
+                    else if (grid[x + i][y].hasShip == true || grid[x + i][y].nearShip == true) return;
                 } else {
-                    if (grid[position + (i * 10)].hasShip == false && grid[position + (i * 10)].nearShip == false) continue;
-                    else if (grid[position + (i * 10)].hasShip == true || grid[position + (i * 10)].nearShip == true) return;
+                    if (grid[x][y + i].hasShip == false && grid[x][y + i].nearShip == false) continue;
+                    else if (grid[x][y + i].hasShip == true || grid[x][y + i].nearShip == true) return;
                 }
             }
             //place
             const carrier = ship(5);
             for (let i = 0; i < 5; i++) {
-                if (orientation == "h") { 
-                    grid[position + i].hasShip = true;
-                    grid[position + i].shipName = carrier;
-                    grid[position + (i + 10)].nearShip = true;
-                    grid[position + (i - 10)].nearShip = true;
-                    if (i == 0) {
-                        grid[position - 1].nearShip = true;
-                    }
-                    if (i == 4) {
-                        grid[position + i + 1].nearShip = true;
-                    }
+                if (orientation == "v") { 
+                    grid[x + i][y].hasShip = true;
+                    grid[x + i][y].shipName = carrier;
+                    if ([x + i] in grid && [y + 1] in grid[x + i]) grid[x + i][y + 1].nearShip = true; //->
+                    if ([x + i] in grid && [y - 1] in grid[x + i]) grid[x + i][y - 1].nearShip = true; //<-
+                    if ([x + 5] in grid && [y] in grid[x + 5]) grid[x + 5][y].nearShip = true; //after
+                    if ([x - 1] in grid && [y] in grid[x - 1]) grid[x - 1][y].nearShip = true; //before
                 }else {
-                    grid[position + (i * 10)].hasShip = true;
-                    grid[position + (i * 10)].shipName = carrier;
-                    grid[position + (i * 10) + 1].nearShip = true;
-                    grid[position + (i * 10) - 1].nearShip = true;
-                    if (i == 0) {
-                        grid[position - 10].nearShip = true;
-                    }
-                    if (i == 4) {
-                        grid[position + (i * 10) + 10].nearShip = true;
-                    }
+                    grid[x][y + i].hasShip = true;
+                    grid[x][y + i].shipName = carrier;
+                    if ([x + 1] in grid && [y + i] in grid[x + i]) grid[x + 1][y + i].nearShip = true; //up
+                    if ([x - 1] in grid && [y + i] in grid[x + i]) grid[x - 1][y + i].nearShip = true; //down
+                    if ([x] in grid && [y + 5] in grid[x]) grid[x][y + 5].nearShip = true; //after
+                    if ([x] in grid && [y - 1] in grid[x]) grid[x][y - 1].nearShip = true; //before
                 }
             } return shipType;
         }
     }
 
-    const receiveAttack = (target) => {
-        if (grid[target].hasShip == true) {
-            grid[target].wasShot = true;
-            grid[target].shipName.hit();
+    const receiveAttack = (x, y) => {
+        if (grid[x][y].hasShip == true) {
+            grid[x][y].wasShot = true;
+            grid[x][y].shipName.hit();
             return "hit"
         }else {
-            grid[target].wasShot = true
+            grid[x][y].wasShot = true
             return "miss"
         };
     }
 
     const checkAllSunk = () => {
-        return grid.filter(cell => cell.shipName != null).every(ships => ships.shipName.isSunk() == true);
+        return grid.forEach((row) => {row.filter(cell => cell.shipName != null).every(ships => ships.shipName.isSunk() == true)});
     }
 
     return {grid, place, receiveAttack, checkAllSunk}
