@@ -9,10 +9,9 @@ function orientChange (ev) {
         ev.target.setAttribute("data-orientation", "v") : ev.target.setAttribute("data-orientation", "h");
 }
 
-let listOfShips = [];
 const allShipsList = ["patrol", "submarine", "destroyer", "battleship", "carrier"];
 
-const displayBoards = (p1, p2, gameType) => {
+const displayBoards = (p1, p2, gameType, playing = p1) => {
     const shipBoards1 = document.querySelector(".player1 .shipsBoard");
     const attackBoard1 = document.querySelector(".player1 .attackBoard");
     const messageContainer = document.querySelector(".winner");
@@ -21,7 +20,7 @@ const displayBoards = (p1, p2, gameType) => {
 
     switch (gameType) {
         case "pvcPlace": //place ships vs computer
-        displayShipList(p1, p2);
+        displayShipList(p1, p2, gameType, playing);
         //clear to update
         while (shipBoards1.firstChild){
             shipBoards1.removeChild(shipBoards1.firstChild);
@@ -89,7 +88,49 @@ const displayBoards = (p1, p2, gameType) => {
         break;
         case "pvpPlace":
         //place ships vs player
-
+        displayShipList(p1, p2, gameType, playing);
+        //clear to update
+        while (shipBoards1.firstChild){
+            shipBoards1.removeChild(shipBoards1.firstChild);
+        }
+        //Show player board of ships
+        playing.Gameboard.grid.forEach((row) => {
+            row.forEach((element) => {
+                const cell = document.createElement("div");
+                cell.classList.add("cell");
+                let indexX = playing.Gameboard.grid.indexOf(row);
+                let indexY = row.indexOf(element);
+                cell.setAttribute("data-indexX", indexX);
+                cell.setAttribute("data-indexY", indexY);
+                
+                if (element.hasShip == true) cell.classList.add("hasShip");
+                if (element.wasShot == true && element.hasShip == false) cell.classList.add("waterHit");
+                if (element.wasShot == true && element.hasShip == true) cell.classList.add("shipHit");
+                if (element.shipName != null && element.shipName.isSunk() == true) cell.classList.add("shipSunk");
+                //event to drop ship
+                if (element.hasShip == false) {
+                    cell.addEventListener("drop", function dropToPlace (ev) {
+                        ev.preventDefault();
+                        let shipType = ev.dataTransfer.getData("text");
+                        let orientation = document.getElementById(shipType).getAttribute("data-orientation");
+                        let indexX = ev.target.getAttribute("data-indexX");
+                        let indexY = ev.target.getAttribute("data-indexY");
+                        let shipPlaced = playing.Gameboard.place(Number(indexX), Number(indexY), orientation, shipType);
+                        playing.listOfShips.push(shipPlaced);
+                        displayBoards(p1, p2, gameType, playing);
+                    });
+                    //event to allow drop and show near ship restriction
+                    cell.addEventListener("dragover", function allowDrop (ev) {
+                        if (playing.Gameboard.grid[ev.target.getAttribute("data-indexX")][ev.target.getAttribute("data-indexY")].hasShip == true || 
+                            playing.Gameboard.grid[ev.target.getAttribute("data-indexX")][ev.target.getAttribute("data-indexY")].nearShip == true) {
+                                ev.target.style.border = "1px dashed red";
+                        }
+                        ev.preventDefault();
+                    });
+                }
+                shipBoards1.appendChild(cell);
+            });
+        });
         break;
         case "pvc":  //play vs computer
 
@@ -138,7 +179,7 @@ const displayBoards = (p1, p2, gameType) => {
                         p1.attackPlayer(cell.getAttribute("data-indexX"), cell.getAttribute("data-indexY"), p2);
                         p2.computerAttack(p1);
                         displayBoards(p1, p2, "pvc");
-                        checkWinner(p1, p2);
+                        checkWinner(p1, p2, gameType);
                     });
                 }
                 attackBoard1.appendChild(cell);
@@ -146,18 +187,77 @@ const displayBoards = (p1, p2, gameType) => {
         })
 
         break;
-        case "pvp":
-        //play vs player
+        case "pvp": //play vs player
+
+        //clear for updated ship display
+        while (shipBoards1.firstChild){
+            shipBoards1.removeChild(shipBoards1.firstChild);
+        }
+        //clear for updated attack board
+        while (attackBoard1.firstChild){
+            attackBoard1.removeChild(attackBoard1.firstChild);
+        }
+
+        loading.querySelector(".shipList").style.visibility = "hidden";
+        if (playing === p1) messageContainer.innerHTML = "Player 1's Turn";
+        else messageContainer.innerHTML = "Player 2's Turn";
+
+        //board of ships
+        playing.Gameboard.grid.forEach((row) => {
+            row.forEach((element) => {
+                const cell = document.createElement("div");
+                cell.classList.add("cell");
+                let indexX = playing.Gameboard.grid.indexOf(row);
+                let indexY = row.indexOf(element);
+                cell.setAttribute("data-indexY", indexY);
+                cell.setAttribute("data-indexX", indexX);
+                if (element.hasShip == true) cell.classList.add("hasShip");
+                if (element.wasShot == true && element.hasShip == false) cell.classList.add("waterHit");
+                if (element.wasShot == true && element.hasShip == true) cell.classList.add("shipHit");
+                if (element.shipName != null && element.shipName.isSunk() == true) cell.classList.add("shipSunk");
+                shipBoards1.appendChild(cell);
+            })
+        })
+
+        let notPlaying = playing === p1 ? p2 : p1;
+
+        //board of attacks
+        notPlaying.Gameboard.grid.forEach((row) => { 
+            row.forEach((element) => {
+                const cell = document.createElement("div");
+                cell.classList.add("cell");
+                let indexX = notPlaying.Gameboard.grid.indexOf(row);
+                let indexY = row.indexOf(element);
+                cell.setAttribute("data-indexX", indexX);
+                cell.setAttribute("data-indexY", indexY);
+                //if (element.hasShip == true) cell.classList.add("hasShip");//teste
+                if (element.wasShot == true && element.hasShip == true) cell.classList.add("shipHit");
+                if (element.wasShot == true && element.hasShip == false) cell.classList.add("waterHit");
+                if (element.shipName != null && element.shipName.isSunk() == true) cell.classList.add("shipSunk");
+                if (element.wasShot == false) {
+                    cell.addEventListener("click", ()=> {
+                        playing.attackPlayer(cell.getAttribute("data-indexX"), cell.getAttribute("data-indexY"), notPlaying);
+                        changeTurn(p1, p2, gameType, playing);
+                        checkWinner(p1, p2, gameType);
+                    });
+                }
+                attackBoard1.appendChild(cell);
+            })
+        })
 
         break;
-        case "restart":
-            listOfShips = [];
-            displayBoards(p1, p2, "pvcPlace");
-            break;
     }
 }
 
-const displayShipList = (playing, p2) => {
+/* //if p1 placed, p2 place
+    if (allShipsList.every(ship => {return p1.listOfShips.includes(ship)}) == true &&
+    allShipsList.every(ship => {return p2.listOfShips.includes(ship)}) == false) changeTurn(p1, p2, gameType, playing);
+    //if both placed out of pvpPlace
+    if (allShipsList.every(ship => {return p1.listOfShips.includes(ship)}) == true &&
+    allShipsList.every(ship => {return p2.listOfShips.includes(ship)}) == true) changeTurn(p1, p2, "pvp", playing); 
+*/
+
+const displayShipList = (p1, p2, gameType, playing) => {
     const messageContainer = document.querySelector(".winner");
     const loading = document.querySelector(".waiting");
     messageContainer.innerHTML = "Please drag and drop all your ships...";
@@ -215,7 +315,12 @@ const displayShipList = (playing, p2) => {
     rngPlace.innerHTML = "Random Place";
     rngPlace.addEventListener("click", () => {
         randomPlace(playing);
-        displayBoards(playing, p2, "pvcPlace");
+        //if p1 placed, p2 place
+        if (allShipsList.every(ship => {return p1.listOfShips.includes(ship)}) == true &&
+        allShipsList.every(ship => {return p2.listOfShips.includes(ship)}) == false) changeTurn(p1, p2, gameType, playing);
+        //if both placed out of pvpPlace
+        if (allShipsList.every(ship => {return p1.listOfShips.includes(ship)}) == true &&
+        allShipsList.every(ship => {return p2.listOfShips.includes(ship)}) == true) changeTurn(p1, p2, "pvp", playing);
     })
     //append
     shipList.appendChild(patrolLi);
@@ -227,27 +332,36 @@ const displayShipList = (playing, p2) => {
     loading.appendChild(shipList);
 }
 
-const checkWinner = (p1, p2) => {
+const checkWinner = (p1, p2, gameType) => {
     const attackBoard1 = document.querySelector(".player1 .attackBoard");
     const messageContainer = document.querySelector(".winner");
     const shipBoards1 = document.querySelector(".player1 .shipsBoard");
     const loading = document.querySelector(".waiting");
-    if (p1.Gameboard.checkAllSunk() == true && p2.Gameboard.checkAllSunk() == true) {
-        shipBoards1.style.visibility = "hidden";
-        attackBoard1.style.visibility = "hidden";
-        loading.style.visibility = "hidden";
-        messageContainer.innerHTML = "It's a Tie!";
-    } else if (p1.Gameboard.checkAllSunk() == true && p2.Gameboard.checkAllSunk() == false) {
-        shipBoards1.style.visibility = "hidden";
-        attackBoard1.style.visibility = "hidden";
-        loading.style.visibility = "hidden";
-        messageContainer.innerHTML = "Player 2 Won!";
-    } else if (p1.Gameboard.checkAllSunk() == false && p2.Gameboard.checkAllSunk() == true) {
-        shipBoards1.style.visibility = "hidden";
-        attackBoard1.style.visibility = "hidden";
-        loading.style.visibility = "hidden";
-        messageContainer.innerHTML = "Player 1 Won!";
-    } else return;
+    if (gameType == "pvc") {
+        if (p1.Gameboard.checkAllSunk() == true && p2.Gameboard.checkAllSunk() == true) {
+            shipBoards1.style.visibility = "hidden";
+            attackBoard1.style.visibility = "hidden";
+            loading.style.visibility = "hidden";
+            messageContainer.innerHTML = "It's a Tie!";
+        } else if (p1.Gameboard.checkAllSunk() == true && p2.Gameboard.checkAllSunk() == false) {
+            shipBoards1.style.visibility = "hidden";
+            attackBoard1.style.visibility = "hidden";
+            loading.style.visibility = "hidden";
+            messageContainer.innerHTML = "Computer Won!";
+        } else if (p1.Gameboard.checkAllSunk() == false && p2.Gameboard.checkAllSunk() == true) {
+            shipBoards1.style.visibility = "hidden";
+            attackBoard1.style.visibility = "hidden";
+            loading.style.visibility = "hidden";
+            messageContainer.innerHTML = "Player 1 Won!";
+        } else return;
+    }else if (gameType == "pvp") {
+        if (p1.Gameboard.checkAllSunk() == true) {
+            shipBoards1.style.visibility = "hidden";
+            attackBoard1.style.visibility = "hidden";
+            loading.style.visibility = "hidden";
+            messageContainer.innerHTML = "You Won!";
+        }
+    }
 }
 
 const randomPlace = (playerPlace/* , gameType */) => {
@@ -268,6 +382,42 @@ const randomPlace = (playerPlace/* , gameType */) => {
         }else continue;
     }
     
+}
+
+const changeTurn = (p1, p2, gameType, playing) => {
+    const shipBoards1 = document.querySelector(".player1 .shipsBoard");
+    const attackBoard1 = document.querySelector(".player1 .attackBoard");
+    const messageContainer = document.querySelector(".winner");
+    const loading = document.querySelector(".waiting");
+    const rngPlace = document.querySelector(".rngPlace-btn");
+
+    //hide boards
+    shipBoards1.style.visibility = "hidden";
+    attackBoard1.style.visibility = "hidden";
+    loading.querySelector(".shipList").style.visibility = "hidden";
+    rngPlace.style.visibility = "hidden";
+
+    //update message according to player
+    if (playing === p2) {
+        messageContainer.innerHTML = "Player 1 click when ready...";
+    }else messageContainer.innerHTML = "Player 2 click when ready...";
+    
+    //change turn
+    playing === p1 ? playing = p2 : playing = p1;
+
+    //display button ready
+    const readyBtn = document.createElement("button");
+    readyBtn.classList.add("readyBtn");
+    readyBtn.innerHTML = "Ready!";
+    readyBtn.addEventListener("click", ()=> {
+        shipBoards1.style.visibility = "visible";
+        attackBoard1.style.visibility = "visible";
+        loading.querySelector(".shipList").style.visibility = "visible";
+        loading.removeChild(readyBtn);
+        displayBoards(p1, p2, gameType, playing);
+    });
+    //append
+    loading.appendChild(readyBtn);
 }
 
 export default displayBoards;

@@ -58,7 +58,7 @@ header {
     justify-content: space-evenly;
 }
 
-.rngPlace-btn {
+.rngPlace-btn, .readyBtn {
     padding: 8px 12px;
     background-color: #64748b;
     color: white;

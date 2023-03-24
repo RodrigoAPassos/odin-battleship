@@ -26,5 +26,5 @@ const newGame = (() => {
     playVs.style.visibility = "hidden";
     document.querySelector(".newGameBtn").addEventListener("click", gameOpt);
     document.querySelector("button.PvC").addEventListener("click", ()=> start("pvc"));
-    document.querySelector(".PvP").addEventListener("click",()=> start("pvp"));
+    document.querySelector("button.PvP").addEventListener("click", ()=> start("pvp"));
 })();
