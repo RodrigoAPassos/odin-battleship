@@ -2,6 +2,7 @@ import gameboard from "./gameboard";
 
 const player = () => {
     const Gameboard = gameboard();
+    let listOfShips = [];
     let legalMove = null;
     let lastHit = [];
     let firstHit = [];
@@ -107,7 +108,7 @@ const player = () => {
         }
     }
 
-    return {Gameboard, attackPlayer, computerAttack}
+    return {Gameboard, attackPlayer, computerAttack, listOfShips}
 }
 
 export default player;

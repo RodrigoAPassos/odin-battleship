@@ -40,6 +40,7 @@ const displayBoards = (p1, p2, gameType) => {
                 if (element.wasShot == true && element.hasShip == false) cell.classList.add("waterHit");
                 if (element.wasShot == true && element.hasShip == true) cell.classList.add("shipHit");
                 if (element.shipName != null && element.shipName.isSunk() == true) cell.classList.add("shipSunk");
+                //event to drop ship
                 if (element.hasShip == false) {
                     cell.addEventListener("drop", function dropToPlace (ev) {
                         ev.preventDefault();
@@ -48,9 +49,10 @@ const displayBoards = (p1, p2, gameType) => {
                         let indexX = ev.target.getAttribute("data-indexX");
                         let indexY = ev.target.getAttribute("data-indexY");
                         let shipPlaced = p1.Gameboard.place(Number(indexX), Number(indexY), orientation, shipType);
-                        listOfShips.push(shipPlaced);
+                        p1.listOfShips.push(shipPlaced);
                         displayBoards(p1, p2, "pvcPlace");
                     });
+                    //event to allow drop and show near ship restriction
                     cell.addEventListener("dragover", function allowDrop (ev) {
                         if (p1.Gameboard.grid[ev.target.getAttribute("data-indexX")][ev.target.getAttribute("data-indexY")].hasShip == true || 
                             p1.Gameboard.grid[ev.target.getAttribute("data-indexX")][ev.target.getAttribute("data-indexY")].nearShip == true) {
@@ -63,7 +65,7 @@ const displayBoards = (p1, p2, gameType) => {
             });
         });
 
-        if (allShipsList.every(ship => {return listOfShips.includes(ship)}) == true) {
+        if (allShipsList.every(ship => {return p1.listOfShips.includes(ship)}) == true) {
             //remove options of ships from earlier step
             while (loading.firstChild){
                 loading.removeChild(loading.firstChild);
@@ -169,7 +171,7 @@ const displayShipList = (playing, p2) => {
     shipList.classList.add("shipList");
     const patrolLi = document.createElement("li");
     patrolLi.innerHTML = "Patrol";
-    if (listOfShips.includes("patrol")) patrolLi.style.visibility = "hidden";
+    if (playing.listOfShips.includes("patrol")) patrolLi.style.visibility = "hidden";
     patrolLi.setAttribute("id", "patrol");
     patrolLi.setAttribute("data-orientation", "h");
     patrolLi.setAttribute("draggable", "true");
@@ -177,7 +179,7 @@ const displayShipList = (playing, p2) => {
     patrolLi.addEventListener("dragstart", dragData);
     const submarineLi = document.createElement("li");
     submarineLi.innerHTML = "Submarine";
-    if (listOfShips.includes("submarine")) submarineLi.style.visibility = "hidden";
+    if (playing.listOfShips.includes("submarine")) submarineLi.style.visibility = "hidden";
     submarineLi.setAttribute("id", "submarine");
     submarineLi.setAttribute("data-orientation", "h");
     submarineLi.setAttribute("draggable", "true");
@@ -185,7 +187,7 @@ const displayShipList = (playing, p2) => {
     submarineLi.addEventListener("dragstart", dragData);
     const destroyerLi = document.createElement("li");
     destroyerLi.innerHTML = "Destroyer";
-    if (listOfShips.includes("destroyer")) destroyerLi.style.visibility = "hidden";
+    if (playing.listOfShips.includes("destroyer")) destroyerLi.style.visibility = "hidden";
     destroyerLi.setAttribute("id", "destroyer");
     destroyerLi.setAttribute("data-orientation", "h");
     destroyerLi.setAttribute("draggable", "true");
@@ -193,7 +195,7 @@ const displayShipList = (playing, p2) => {
     destroyerLi.addEventListener("dragstart", dragData);
     const battleshipLi = document.createElement("li");
     battleshipLi.innerHTML = "Battleship";
-    if (listOfShips.includes("battleship")) battleshipLi.style.visibility = "hidden";
+    if (playing.listOfShips.includes("battleship")) battleshipLi.style.visibility = "hidden";
     battleshipLi.setAttribute("id", "battleship");
     battleshipLi.setAttribute("data-orientation", "h");
     battleshipLi.setAttribute("draggable", "true");
@@ -201,7 +203,7 @@ const displayShipList = (playing, p2) => {
     battleshipLi.addEventListener("dragstart", dragData);
     const carrierLi = document.createElement("li");
     carrierLi.innerHTML = "Carrier";
-    if (listOfShips.includes("carrier")) carrierLi.style.visibility = "hidden";
+    if (playing.listOfShips.includes("carrier")) carrierLi.style.visibility = "hidden";
     carrierLi.setAttribute("id", "carrier");
     carrierLi.setAttribute("data-orientation", "h");
     carrierLi.setAttribute("draggable", "true");
@@ -210,6 +212,7 @@ const displayShipList = (playing, p2) => {
     //place random button
     const rngPlace = document.createElement("button");
     rngPlace.classList.add("rngPlace-btn");
+    rngPlace.innerHTML = "Random Place";
     rngPlace.addEventListener("click", () => {
         randomPlace(playing);
         displayBoards(playing, p2, "pvcPlace");
@@ -248,20 +251,21 @@ const checkWinner = (p1, p2) => {
 }
 
 const randomPlace = (playerPlace/* , gameType */) => {
-    listOfShips = [];
     
     for (let i = (allShipsList.length - 1); i >= 0; i--) {
-        let randomX = Math.floor(Math.random() * 10);
-        let randomY = Math.floor(Math.random() * 10);
-        let rnOrientation;
-        randomX % 2 == 0 ? rnOrientation = "v" : rnOrientation = "h";
-        let shipPlaced = playerPlace.Gameboard.place(randomX, randomY, rnOrientation, allShipsList[i]);
-        while(shipPlaced === undefined) {
-            randomX = Math.floor(Math.random() * 10);
-            randomY = Math.floor(Math.random() * 10);
+        if (!(playerPlace.listOfShips.includes(allShipsList[i]))) {
+            let randomX = Math.floor(Math.random() * 10);
+            let randomY = Math.floor(Math.random() * 10);
+            let rnOrientation;
             randomX % 2 == 0 ? rnOrientation = "v" : rnOrientation = "h";
-            shipPlaced = playerPlace.Gameboard.place(randomX, randomY, rnOrientation, allShipsList[i]);
-        }listOfShips.push(shipPlaced);
+            let shipPlaced = playerPlace.Gameboard.place(randomX, randomY, rnOrientation, allShipsList[i]);
+            while(shipPlaced === undefined) {
+                randomX = Math.floor(Math.random() * 10);
+                randomY = Math.floor(Math.random() * 10);
+                randomX % 2 == 0 ? rnOrientation = "v" : rnOrientation = "h";
+                shipPlaced = playerPlace.Gameboard.place(randomX, randomY, rnOrientation, allShipsList[i]);
+            }playerPlace.listOfShips.push(shipPlaced);
+        }else continue;
     }
     
 }

@@ -58,6 +58,15 @@ header {
     justify-content: space-evenly;
 }
 
+.rngPlace-btn {
+    padding: 8px 12px;
+    background-color: #64748b;
+    color: white;
+    border-radius: 12px;
+    border: 2px solid #475569;
+    cursor: pointer;
+}
+
 [data-orientation="h"] {
     color: blue;
 }
