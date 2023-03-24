@@ -1,6 +1,4 @@
-/* function allowDrop (ev) {
-    ev.preventDefault();
-} */
+
 
 function dragData (ev) {
     ev.dataTransfer.setData("text", ev.target.id);
@@ -23,7 +21,7 @@ const displayBoards = (p1, p2, gameType) => {
 
     switch (gameType) {
         case "pvcPlace": //place ships vs computer
-        displayShipList();
+        displayShipList(p1, p2);
         //clear to update
         while (shipBoards1.firstChild){
             shipBoards1.removeChild(shipBoards1.firstChild);
@@ -82,13 +80,7 @@ const displayBoards = (p1, p2, gameType) => {
             loading.appendChild(boardName1);
             loading.appendChild(boardName2);
 
-            //place computer ships
-            p2.Gameboard.place(0, 4, "v", "patrol");
-            p2.Gameboard.place(0, 0, "v", "submarine");
-            p2.Gameboard.place(2, 4, "h", "destroyer");
-            p2.Gameboard.place(5, 4, "h", "battleship");
-            p2.Gameboard.place(7, 4, "h", "carrier");
-
+            randomPlace(p2/* , gameType */);
             displayBoards(p1, p2, "pvc");
         }
 
@@ -127,7 +119,7 @@ const displayBoards = (p1, p2, gameType) => {
         
 
         //board of attacks
-        p2.Gameboard.grid.forEach((row) => {
+        p2.Gameboard.grid.forEach((row) => { 
             row.forEach((element) => {
                 const cell = document.createElement("div");
                 cell.classList.add("cell");
@@ -135,7 +127,7 @@ const displayBoards = (p1, p2, gameType) => {
                 let indexY = row.indexOf(element);
                 cell.setAttribute("data-indexX", indexX);
                 cell.setAttribute("data-indexY", indexY);
-                
+                //if (element.hasShip == true) cell.classList.add("hasShip");//teste
                 if (element.wasShot == true && element.hasShip == true) cell.classList.add("shipHit");
                 if (element.wasShot == true && element.hasShip == false) cell.classList.add("waterHit");
                 if (element.shipName != null && element.shipName.isSunk() == true) cell.classList.add("shipSunk");
@@ -163,7 +155,7 @@ const displayBoards = (p1, p2, gameType) => {
     }
 }
 
-const displayShipList = () => {
+const displayShipList = (playing, p2) => {
     const messageContainer = document.querySelector(".winner");
     const loading = document.querySelector(".waiting");
     messageContainer.innerHTML = "Please drag and drop all your ships...";
@@ -215,12 +207,20 @@ const displayShipList = () => {
     carrierLi.setAttribute("draggable", "true");
     carrierLi.addEventListener("click", orientChange);
     carrierLi.addEventListener("dragstart", dragData);
+    //place random button
+    const rngPlace = document.createElement("button");
+    rngPlace.classList.add("rngPlace-btn");
+    rngPlace.addEventListener("click", () => {
+        randomPlace(playing);
+        displayBoards(playing, p2, "pvcPlace");
+    })
     //append
     shipList.appendChild(patrolLi);
     shipList.appendChild(submarineLi);
     shipList.appendChild(destroyerLi);
     shipList.appendChild(battleshipLi);
     shipList.appendChild(carrierLi);
+    loading.appendChild(rngPlace);
     loading.appendChild(shipList);
 }
 
@@ -245,6 +245,25 @@ const checkWinner = (p1, p2) => {
         loading.style.visibility = "hidden";
         messageContainer.innerHTML = "Player 1 Won!";
     } else return;
+}
+
+const randomPlace = (playerPlace/* , gameType */) => {
+    listOfShips = [];
+    
+    for (let i = (allShipsList.length - 1); i >= 0; i--) {
+        let randomX = Math.floor(Math.random() * 10);
+        let randomY = Math.floor(Math.random() * 10);
+        let rnOrientation;
+        randomX % 2 == 0 ? rnOrientation = "v" : rnOrientation = "h";
+        let shipPlaced = playerPlace.Gameboard.place(randomX, randomY, rnOrientation, allShipsList[i]);
+        while(shipPlaced === undefined) {
+            randomX = Math.floor(Math.random() * 10);
+            randomY = Math.floor(Math.random() * 10);
+            randomX % 2 == 0 ? rnOrientation = "v" : rnOrientation = "h";
+            shipPlaced = playerPlace.Gameboard.place(randomX, randomY, rnOrientation, allShipsList[i]);
+        }listOfShips.push(shipPlaced);
+    }
+    
 }
 
 export default displayBoards;
