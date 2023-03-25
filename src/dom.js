@@ -117,7 +117,9 @@ const displayBoards = (p1, p2, gameType, playing = p1) => {
                         let indexY = ev.target.getAttribute("data-indexY");
                         let shipPlaced = playing.Gameboard.place(Number(indexX), Number(indexY), orientation, shipType);
                         playing.listOfShips.push(shipPlaced);
-                        displayBoards(p1, p2, gameType, playing);
+                        if (allShipsList.every(ship => {return playing.listOfShips.includes(ship)}) == true) {
+                            changeTurn(p1, p2, gameType, playing);
+                        }else displayBoards(p1, p2, gameType, playing);
                     });
                     //event to allow drop and show near ship restriction
                     cell.addEventListener("dragover", function allowDrop (ev) {
@@ -397,6 +399,8 @@ const changeTurn = (p1, p2, gameType, playing) => {
     loading.querySelector(".shipList").style.visibility = "hidden";
     rngPlace.style.visibility = "hidden";
 
+    if (allShipsList.every(ship => {return p1.listOfShips.includes(ship)}) == true &&
+    allShipsList.every(ship => {return p2.listOfShips.includes(ship)}) == true) gameType = "pvp"; 
     //update message according to player
     if (playing === p2) {
         messageContainer.innerHTML = "Player 1 click when ready...";
