@@ -1,6 +1,7 @@
 import ship from "./ship";
 
 const Gameboard = () => {
+    const placedShips = [];
     const grid = [];
     const size = 10;
 
@@ -24,6 +25,7 @@ const Gameboard = () => {
                 }
             }
             const patrol = ship(1);
+            placedShips.push({ship: patrol, shipName: shipType});
             //place
             for (let i = 0; i < 1; i++) {
                 if (orientation == "v") { 
@@ -58,6 +60,7 @@ const Gameboard = () => {
             }
             //place
             const submarine = ship(2);
+            placedShips.push({ship: submarine, shipName: shipType});
             for (let i = 0; i < 2; i++) {
                 if (orientation == "v") { 
                     grid[x + i][y].hasShip = true;
@@ -90,6 +93,7 @@ const Gameboard = () => {
             }
             //place
             const destroyer = ship(3);
+            placedShips.push({ship: destroyer, shipName: shipType});
             for (let i = 0; i < 3; i++) {
                 if (orientation == "v") { 
                     grid[x + i][y].hasShip = true;
@@ -122,6 +126,7 @@ const Gameboard = () => {
             }
             //place
             const battleship = ship(4);
+            placedShips.push({ship: battleship, shipName: shipType});
             for (let i = 0; i < 4; i++) {
                 if (orientation == "v") { 
                     grid[x + i][y].hasShip = true;
@@ -154,6 +159,7 @@ const Gameboard = () => {
             }
             //place
             const carrier = ship(5);
+            placedShips.push({ship: carrier, shipName: shipType});
             for (let i = 0; i < 5; i++) {
                 if (orientation == "v") { 
                     grid[x + i][y].hasShip = true;
@@ -189,7 +195,7 @@ const Gameboard = () => {
         return grid.every(row => row.filter(cell => cell.shipName != null).every(ships => ships.shipName.isSunk() == true));
     }
 
-    return {grid, place, receiveAttack, checkAllSunk}
+    return {grid, place, receiveAttack, checkAllSunk, placedShips}
 }
 
 export default Gameboard;

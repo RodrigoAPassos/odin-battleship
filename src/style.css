@@ -126,6 +126,11 @@ header {
     background-color: red;
 }
 
+.status {
+    display: flex;
+    justify-content: space-around;
+}
+
 footer {
     display: flex;
     justify-content: center;

@@ -1,5 +1,3 @@
-
-
 function dragData (ev) {
     ev.dataTransfer.setData("text", ev.target.id);
 }
@@ -238,9 +236,9 @@ const displayBoards = (p1, p2, gameType, playing = p1) => {
                 if (element.shipName != null && element.shipName.isSunk() == true) cell.classList.add("shipSunk");
                 if (element.wasShot == false) {
                     cell.addEventListener("click", ()=> {
-                        playing.attackPlayer(cell.getAttribute("data-indexX"), cell.getAttribute("data-indexY"), notPlaying);
-                        changeTurn(p1, p2, gameType, playing);
-                        checkWinner(p1, p2, gameType);
+                        let attackResult = playing.attackPlayer(cell.getAttribute("data-indexX"), cell.getAttribute("data-indexY"), notPlaying);
+                        let finished = checkWinner(p1, p2, gameType, notPlaying, attackResult);
+                        if (finished != true) changeTurn(p1, p2, gameType, playing);
                     });
                 }
                 attackBoard1.appendChild(cell);
@@ -250,14 +248,6 @@ const displayBoards = (p1, p2, gameType, playing = p1) => {
         break;
     }
 }
-
-/* //if p1 placed, p2 place
-    if (allShipsList.every(ship => {return p1.listOfShips.includes(ship)}) == true &&
-    allShipsList.every(ship => {return p2.listOfShips.includes(ship)}) == false) changeTurn(p1, p2, gameType, playing);
-    //if both placed out of pvpPlace
-    if (allShipsList.every(ship => {return p1.listOfShips.includes(ship)}) == true &&
-    allShipsList.every(ship => {return p2.listOfShips.includes(ship)}) == true) changeTurn(p1, p2, "pvp", playing); 
-*/
 
 const displayShipList = (p1, p2, gameType, playing) => {
     const messageContainer = document.querySelector(".winner");
@@ -334,11 +324,13 @@ const displayShipList = (p1, p2, gameType, playing) => {
     loading.appendChild(shipList);
 }
 
-const checkWinner = (p1, p2, gameType) => {
+const checkWinner = (p1, p2, gameType, playing, attackResult) => {
     const attackBoard1 = document.querySelector(".player1 .attackBoard");
     const messageContainer = document.querySelector(".winner");
     const shipBoards1 = document.querySelector(".player1 .shipsBoard");
     const loading = document.querySelector(".waiting");
+    const statusAttack = document.querySelector(".lastAttack");
+    const statusSunk = document.querySelector(".sunkShips");
     if (gameType == "pvc") {
         if (p1.Gameboard.checkAllSunk() == true && p2.Gameboard.checkAllSunk() == true) {
             shipBoards1.style.visibility = "hidden";
@@ -354,19 +346,24 @@ const checkWinner = (p1, p2, gameType) => {
             shipBoards1.style.visibility = "hidden";
             attackBoard1.style.visibility = "hidden";
             loading.style.visibility = "hidden";
-            messageContainer.innerHTML = "Player 1 Won!";
+            messageContainer.innerHTML = "You Won!";
         } else return;
     }else if (gameType == "pvp") {
-        if (p1.Gameboard.checkAllSunk() == true) {
+        if (playing.Gameboard.checkAllSunk() == true) {
             shipBoards1.style.visibility = "hidden";
             attackBoard1.style.visibility = "hidden";
             loading.style.visibility = "hidden";
+            statusAttack.style.visibility = "hidden";
+            statusSunk.style.visibility = "hidden";
             messageContainer.innerHTML = "You Won!";
-        }
+            return true;
+        }else {
+            displayStatus(p1, p2, gameType, playing, attackResult)
+        };
     }
 }
 
-const randomPlace = (playerPlace/* , gameType */) => {
+const randomPlace = (playerPlace) => {
     
     for (let i = (allShipsList.length - 1); i >= 0; i--) {
         if (!(playerPlace.listOfShips.includes(allShipsList[i]))) {
@@ -422,6 +419,27 @@ const changeTurn = (p1, p2, gameType, playing) => {
     });
     //append
     loading.appendChild(readyBtn);
+}
+
+const checkSunkShips = (playing) => {
+    let shipsSunk = playing.Gameboard.placedShips.reduce((sunkShips, ships) => {
+        if (ships.ship.isSunk() == true) {
+            sunkShips.push(ships.shipName);
+        }return sunkShips;
+    }, []); return allShipsList.filter(ship => !shipsSunk.includes(ship));
+}
+
+const displayStatus = (p1, p2, gameType, notPlaying, attackResult) => {
+    const statusAttack = document.querySelector(".lastAttack");
+    const statusSunk = document.querySelector(".sunkShips");
+
+    if (notPlaying === p2) {
+        statusAttack.innerHTML = attackResult == "valid hit attack" ? "Player 1's shot hit your ship! " : "Player 1's shot missed. ";
+        statusSunk.innerHTML = "List of not sunk ships from Player 1: " + checkSunkShips(p1);
+    }else {
+        statusAttack.innerHTML = attackResult == "valid hit attack" ? "Player 2's shot hit your ship! " : "Player 2's shot missed. ";
+        statusSunk.innerHTML = "List of not sunk ships from Player 2: " + checkSunkShips(p2);
+    }
 }
 
 export default displayBoards;
