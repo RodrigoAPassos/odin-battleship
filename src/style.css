@@ -1,5 +1,10 @@
+@font-face {
+    font-family: "Orbitron";
+    src: url(./resources/Orbitron/static/Orbitron-Regular.ttf);
+}
+
 body {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Orbitron", Arial, Helvetica, sans-serif;
     font-size: 16px;
     margin: 0;
     width: 100vw;
@@ -7,6 +12,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    cursor: default;
 }
 
 header {
@@ -67,11 +73,11 @@ header {
     cursor: pointer;
 }
 
-[data-orientation="h"] {
+li[data-orientation="h"] {
     color: blue;
 }
 
-[data-orientation="v"] {
+li[data-orientation="v"] {
     color: green;
 }
 
@@ -85,6 +91,30 @@ header {
     display: flex;
     gap: 2rem;
     list-style-type: none;
+    align-items: center;
+    position: relative;
+}
+
+.shipList li {
+    cursor: grab;
+    text-align: center;
+}
+
+.tooltip {
+    visibility: hidden;
+    width: 280px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    position: absolute;
+    top: -5px;
+    right: 95%;
+}
+
+.shipList:hover .tooltip{
+    visibility: visible;
 }
 
 .player1, .player2 {
@@ -129,6 +159,11 @@ header {
 .status {
     display: flex;
     justify-content: space-around;
+}
+
+a {
+    text-decoration: none;
+    color: white;
 }
 
 footer {

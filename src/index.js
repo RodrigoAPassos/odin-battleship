@@ -9,7 +9,7 @@ const start = (gameType) => {
     })
     
     const playVs = document.querySelector(".playVs");
-    playVs.style.visibility = "hidden";
+    playVs.style.display = "none";
 
     //start game
     gameLoop(gameType);
