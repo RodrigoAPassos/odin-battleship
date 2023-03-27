@@ -1,0 +1,179 @@
+@font-face {
+    font-family: "Orbitron";
+    src: url(./resources/Orbitron/static/Orbitron-Regular.ttf);
+}
+
+body {
+    font-family: "Orbitron", Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: default;
+    background-color: #94a3b8;
+}
+
+header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    font-size: 2rem;
+    background-color: gray;
+}
+
+.loadContainer {
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.playVs {
+    text-align: center;
+}
+
+.newGameBtn {
+    padding: 8px 12px;
+    background-color: #64748b;
+    color: white;
+    border-radius: 12px;
+    border: 2px solid #475569;
+    cursor: pointer;
+}
+
+.newGameBtn:active, .PvP:active, .PvC:active {
+    border: 1px solid #475569;
+}
+
+.PvC, .PvP {
+    font-size: 0.8rem;
+    padding: 8px 12px;
+    background-color: #64748b;
+    color: white;
+    border-radius: 12px;
+    border: 2px solid #475569;
+    cursor: pointer;
+}
+
+.waiting {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.rngPlace-btn, .readyBtn {
+    padding: 8px 12px;
+    background-color: #64748b;
+    color: white;
+    border-radius: 12px;
+    border: 2px solid #475569;
+    cursor: pointer;
+}
+
+li[data-orientation="h"] {
+    color: blue;
+}
+
+li[data-orientation="v"] {
+    color: green;
+}
+
+.winner {
+    font-size: 1.4rem;
+    color: black;
+    text-align: center;
+}
+
+.shipList {
+    display: flex;
+    gap: 2rem;
+    list-style-type: none;
+    align-items: center;
+    position: relative;
+}
+
+.shipList li {
+    cursor: grab;
+    text-align: center;
+}
+
+.tooltip {
+    visibility: hidden;
+    width: 280px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    position: absolute;
+    top: -5px;
+    right: 95%;
+}
+
+.shipList:hover .tooltip{
+    visibility: visible;
+}
+
+.player1, .player2 {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.shipsBoard, .attackBoard {
+    display: flex;
+    flex-wrap: wrap;
+    width: 320px;
+    justify-content: center;
+    align-items: center;
+}
+
+.cell {
+    height: 30px;
+    width: 30px;
+    border: 1px solid grey;
+    background-color: white;
+}
+
+.hasShip {
+    background-color: #475569;
+}
+
+.waterHit {
+    background-color: aquamarine;
+    outline: solid 1px blue;
+    outline-offset: -1px;
+}
+
+.shipHit {
+    background-color: #1e293b;
+    outline: solid 1px red;
+    outline-offset: -1px;
+}
+
+.shipSunk {
+    background-color: red;
+}
+
+.status {
+    display: flex;
+    justify-content: space-around;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
+
+footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    font-size: 1rem;
+    background-color: black;   
+    color: white;
+}
