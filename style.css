@@ -1,10 +1,7 @@
-@font-face {
-    font-family: "Orbitron";
-    src: url(./resources/Orbitron/static/Orbitron-Regular.ttf);
-}
+@import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
 
 body {
-    font-family: "Orbitron", Arial, Helvetica, sans-serif;
+    font-family: 'Orbitron', sans-serif;
     font-size: 16px;
     margin: 0;
     width: 100vw;
