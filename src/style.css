@@ -13,6 +13,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
     cursor: default;
+    background-color: #94a3b8;
 }
 
 header {
@@ -134,6 +135,7 @@ li[data-orientation="v"] {
     height: 30px;
     width: 30px;
     border: 1px solid grey;
+    background-color: white;
 }
 
 .hasShip {

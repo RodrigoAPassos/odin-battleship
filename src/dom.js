@@ -55,7 +55,7 @@ const displayBoards = (p1, p2, gameType, playing = p1) => {
                     cell.addEventListener("dragover", function allowDrop (ev) {
                         if (p1.Gameboard.grid[ev.target.getAttribute("data-indexX")][ev.target.getAttribute("data-indexY")].hasShip == true || 
                             p1.Gameboard.grid[ev.target.getAttribute("data-indexX")][ev.target.getAttribute("data-indexY")].nearShip == true) {
-                                ev.target.style.cursor = "not-allowed";
+                                ev.target.style.backgroundColor = "red";
                         }else {
                             ev.target.style.backgroundColor = "rgba(0, 0, 255, 0.5)";
                         }
@@ -78,7 +78,7 @@ const displayBoards = (p1, p2, gameType, playing = p1) => {
             }
 
             //messages
-            messageContainer.innerHTML = "Player 1";
+            messageContainer.innerHTML = "Click your Attack Grid to perform an attack...";
             shipBoards1.style.visibility = "visible";
             attackBoard1.style.visibility = "visible";
             const boardName1 = document.createElement("div");
@@ -132,7 +132,7 @@ const displayBoards = (p1, p2, gameType, playing = p1) => {
                     cell.addEventListener("dragover", function allowDrop (ev) {
                         if (playing.Gameboard.grid[ev.target.getAttribute("data-indexX")][ev.target.getAttribute("data-indexY")].hasShip == true || 
                             playing.Gameboard.grid[ev.target.getAttribute("data-indexX")][ev.target.getAttribute("data-indexY")].nearShip == true) {
-                                ev.target.style.cursor = "not-allowed";
+                                ev.target.style.backgroundColor = "red";
                         }else {
                             ev.target.style.backgroundColor = "rgba(0, 0, 255, 0.5)";
                         }
