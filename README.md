@@ -2,7 +2,7 @@
 
 Play the classic game!
 
-+ Place your ships;
++ Place your ships or use the random option;
 + Play against computer or against a local player.
 
 Click in the [Live Preview](https://rodrigoapassos.github.io/odin-battleship/) to see and use the most recent stable version.
